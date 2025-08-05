@@ -18,6 +18,7 @@ private:
 
 public:
     Quad(Vec2 pos, Vec2 scale , Texture* tex);
+    Quad(Vec2 pos, Vec2 scale , unsigned int mid);
     void Draw();
     void SetPosition(Vec2 Pos);
     void SetScale(Vec2 Scale){m_scale  = Scale;}

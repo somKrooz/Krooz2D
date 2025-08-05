@@ -54,6 +54,7 @@ target_include_directories(krooz PUBLIC
     external/GLFW/include
     external/CURL/include
     external/STB
+    external/JSON
     external/GLFW/src
 )
 

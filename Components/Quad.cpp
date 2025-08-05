@@ -40,6 +40,33 @@ void Quad::SetScaleOffset(Vec2 scale , Vec2 offset){
     uvOffset  = offset;
 }
 
+
+Quad::Quad(Vec2 pos, Vec2 scale , unsigned int mid){
+    uvScale = Vec2(1,1);
+    uvOffset = Vec2(0,0);
+    std::vector<float> vertices = {
+        0.0f, 0.0f, 0.0f, 0.0f,  
+        1.0f, 0.0f, 1.0f, 0.0f, 
+        1.0f, 1.0f, 1.0f, 1.0f,  
+
+        0.0f, 0.0f, 0.0f, 0.0f, 
+        1.0f, 1.0f, 1.0f, 1.0f,  
+        0.0f, 1.0f, 0.0f, 1.0f  
+    };
+
+    mBuffer = new Buffer();
+    mBuffer->UploadData(vertices , 4 , GL_TRIANGLES);
+    mTexture = new Texture("");
+    mTexture->SetId(mid);
+    m_pos = pos;
+    m_scale = scale;
+
+    mShader = new Shader(DefaultShader::SolidVertex , DefaultShader::SolidFragment);
+    m_model = Mat4::identity();
+    m_model = m_model * Mat4::translate(pos);
+    m_model = m_model * Mat4::scale(scale);
+}
+
 void Quad::Draw()
 {
     mShader->Use();
