@@ -21,4 +21,6 @@ public:
     void multScale(int Scale);
     std::vector<Vec2> GetData();
     int GetScale();
+    std::vector<Vec2> GetInstantData(std::string name);
+    
 };

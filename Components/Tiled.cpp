@@ -47,6 +47,27 @@ struct TiledImpl {
             }
         }
     }
+    
+    std::vector<Vec2> GetInstantPosition(std::string Name){
+
+        std::vector<Vec2> col;
+         for (const auto& el : mjson["layers"]) {
+            if (el["name"] == Name) {
+                const auto& Data = el["data"];
+                for(int y=0 ; y<mhid; y++){
+                    for(int x=0; x < mwid; x++){
+                        int index = y* mwid + x;
+                        auto tileid = Data[index];
+                        if (tileid != 0) {
+                            Vec2 position(x * mtsize, y * mtsize);
+                            col.push_back(position);
+                        }
+                    }
+                }
+            }
+         }
+         return col;
+    }
 
     std::unordered_map<std::string, std::vector<AABB_RDY>> GetData(){
         return CollisionData;
@@ -78,6 +99,12 @@ std::vector<Vec2> Tiled::GetData(){
 void Tiled::multScale(int scale){
     impl->Mult(scale);
 }
+
+
 int Tiled::GetScale(){
     return impl->mtsize;
+}
+
+std::vector<Vec2> Tiled::GetInstantData(std::string name){
+    return impl->GetInstantPosition(name);
 }
