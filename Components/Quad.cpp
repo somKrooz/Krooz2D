@@ -40,7 +40,6 @@ void Quad::SetScaleOffset(Vec2 scale , Vec2 offset){
     uvOffset  = offset;
 }
 
-
 Quad::Quad(Vec2 pos, Vec2 scale , unsigned int mid){
     uvScale = Vec2(1,1);
     uvOffset = Vec2(0,0);

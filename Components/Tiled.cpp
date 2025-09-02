@@ -49,7 +49,6 @@ struct TiledImpl {
     }
     
     std::vector<Vec2> GetInstantPosition(std::string Name){
-
         std::vector<Vec2> col;
          for (const auto& el : mjson["layers"]) {
             if (el["name"] == Name) {

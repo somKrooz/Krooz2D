@@ -1,6 +1,7 @@
 cmake_minimum_required(VERSION 3.20)
-project(KroozEngine)
+project(KroozEngine LANGUAGES C CXX)
 
+# ==== Standards ====
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_C_STANDARD 11)
 set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS ON)
@@ -10,44 +11,31 @@ option(KROOZ_BUILD_EXAMPLES "Build example projects" OFF)
 
 # ==== Compiler Flags ====
 if(MSVC)
-    add_definitions(
-        -D_CRT_SECURE_NO_WARNINGS
-        -D_GLFW_WIN32
-        -DWIN32_LEAN_AND_MEAN
-        -DNOMINMAX
+    add_compile_definitions(
+        _CRT_SECURE_NO_WARNINGS
+        _GLFW_WIN32
+        WIN32_LEAN_AND_MEAN
+        NOMINMAX
     )
 
     add_compile_options(
-        /W3
-        /MP
-        /bigobj
-        /wd4996
-        $<$<CONFIG:Debug>:/MDd>
-        $<$<CONFIG:Release>:/MDd>
+        /MP          # Multi-processor compile
+        /bigobj      # Large object support
+        /wd4996      # Disable deprecated warnings
+        /wd4244      # Disable int->float conversion warnings
     )
 endif()
 
-# ==== Source Collection ====
-file(GLOB_RECURSE KROOZ_SRC CONFIGURE_DEPENDS
+# ==== Source Files ====
+file(GLOB_RECURSE KROOZ_SRC
     "Core/*.cpp"
     "Components/*.cpp"
     "external/GLAD/src/*.c"
     "external/GLFW/src/*.c"
 )
 
-file(GLOB_RECURSE KROOZ_HEADERS CONFIGURE_DEPENDS
-    "Core/include/*.h"
-    "Core/include/*.hpp"
-    "Components/include/*.h"
-    "Components/include/*.hpp"
-    "external/GLAD/include/*.h"
-    "external/GLFW/include/*.h"
-)
-
-# ==== Library ====
-add_library(krooz STATIC ${KROOZ_SRC} ${KROOZ_HEADERS})
-
-target_include_directories(krooz PUBLIC
+# ==== Include Directories ====
+set(KROOZ_INCLUDE
     Core/include
     Components/include
     external/GLAD/include
@@ -57,6 +45,10 @@ target_include_directories(krooz PUBLIC
     external/JSON
     external/GLFW/src
 )
+
+# ==== Library ====
+add_library(krooz STATIC ${KROOZ_SRC})
+target_include_directories(krooz PUBLIC ${KROOZ_INCLUDE})
 
 target_link_libraries(krooz PUBLIC
     opengl32
@@ -68,13 +60,21 @@ target_link_libraries(krooz PUBLIC
     crypt32
 )
 
+# ==== Output Paths (Flattened, no Debug/Release subfolders) ====
 set_target_properties(krooz PROPERTIES
     OUTPUT_NAME "krooz"
     ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/lib"
+    ARCHIVE_OUTPUT_DIRECTORY_DEBUG   "${CMAKE_BINARY_DIR}/lib"
+    ARCHIVE_OUTPUT_DIRECTORY_RELEASE "${CMAKE_BINARY_DIR}/lib"
     LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/lib"
+    LIBRARY_OUTPUT_DIRECTORY_DEBUG   "${CMAKE_BINARY_DIR}/lib"
+    LIBRARY_OUTPUT_DIRECTORY_RELEASE "${CMAKE_BINARY_DIR}/lib"
     RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin"
+    RUNTIME_OUTPUT_DIRECTORY_DEBUG   "${CMAKE_BINARY_DIR}/bin"
+    RUNTIME_OUTPUT_DIRECTORY_RELEASE "${CMAKE_BINARY_DIR}/bin"
 )
 
+# ==== Post-build Script ====
 add_custom_command(TARGET krooz POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E echo "Running Krooz packaging script..."
     COMMAND ${CMAKE_COMMAND} -E env PYTHONIOENCODING=utf-8 python ${CMAKE_SOURCE_DIR}/package.py
@@ -82,12 +82,7 @@ add_custom_command(TARGET krooz POST_BUILD
     COMMENT "Packaging Krooz2D after build"
 )
 
-# # ==== Examples (Optional) ====
-# if(KROOZ_BUILD_EXAMPLES)
-#     add_subdirectory(examples)
-# endif()
-
-# # ==== Summary ====
-# message(STATUS "KroozEngine for Windows configured:")
-# message(STATUS "  Build Type: ${CMAKE_BUILD_TYPE}")
-# message(STATUS "  Output Lib: ${CMAKE_BINARY_DIR}/lib/krooz.lib")
+# ==== Examples (Optional) ====
+if(KROOZ_BUILD_EXAMPLES)
+    add_subdirectory(examples)
+endif()

@@ -28,7 +28,7 @@ public:
 
     void RecordFrame(const Vec2& pos) {
         if (recording) {
-            mCache.push_back({pos});
+            mCache.insert(mCache.begin(), {pos});
         }
     }
 
@@ -45,4 +45,8 @@ public:
         outPos = mCache[playbackIndex++].mPos;
         return true;
     }
+
+    bool isReloading(){return recording;}
+    bool isPlaying(){return playing;}
+    void isShit(){return;}
 };

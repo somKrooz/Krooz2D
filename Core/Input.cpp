@@ -3,8 +3,8 @@
 
 void Input::Init(GLFWwindow* window){
     s_Window = window;
-
 }
+
 bool Input::IsDown(int key){
     return glfwGetKey(s_Window, key) == GLFW_PRESS;
 }
