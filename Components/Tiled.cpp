@@ -55,7 +55,7 @@ struct TiledImpl {
                 const auto& Data = el["data"];
                 for(int y=0 ; y<mhid; y++){
                     for(int x=0; x < mwid; x++){
-                        int index = y* mwid + x;
+                        int index = y * mwid + x;
                         auto tileid = Data[index];
                         if (tileid != 0) {
                             Vec2 position(x * mtsize, y * mtsize);

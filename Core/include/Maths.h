@@ -16,6 +16,10 @@ struct Vec2 {
         y += other.y;
         return *this;
     }
+    static inline Vec2 Zero()
+    {
+        return Vec2(0,0);
+    } 
 
     float dot(const Vec2& v) const { return x * v.x + y * v.y; }
     float length() const { return std::sqrt(x*x + y*y); }

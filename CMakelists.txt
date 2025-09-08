@@ -29,6 +29,7 @@ endif()
 # ==== Source Files ====
 file(GLOB_RECURSE KROOZ_SRC
     "Core/*.cpp"
+    "Core/*.h"
     "Components/*.cpp"
     "external/GLAD/src/*.c"
     "external/GLFW/src/*.c"
