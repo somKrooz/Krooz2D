@@ -7,12 +7,14 @@ using json = nlohmann::json;
 
 struct TiledImpl {
     json mjson;
+    const char* mfilepath;
     int mwid, mhid, mtsize;
     std::vector<AABB_RDY> collection;
     std::unordered_map<std::string, std::vector<AABB_RDY>> CollisionData;
 
     void loadFromFile(const char* path) {
         std::ifstream file(path);
+        mfilepath = path;
         file >> mjson;
 
         if (mjson.empty())
@@ -71,6 +73,7 @@ struct TiledImpl {
     std::unordered_map<std::string, std::vector<AABB_RDY>> GetData(){
         return CollisionData;
     }
+
 };
 
 

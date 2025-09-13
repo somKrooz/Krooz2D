@@ -1,5 +1,8 @@
 #include "glad/glad.h"
 #include "Shader.h"
+#include "fstream"
+#include <sstream>
+#include "iostream"
 
 Shader::Shader(cstr vertex , cstr fragment){
     
@@ -76,4 +79,15 @@ void Shader::SetV3(cstr uniform, Vec3 val)
 void Shader::SetBool(cstr uniform , bool val){
     uint location = glGetUniformLocation(m_ShaderProgram , uniform);
     glUniform1i(location , (int)val);
+}
+
+
+std::string Shader::LoadShaderFromFile(const char* path)
+{
+    std::ifstream file(path, std::ios::in | std::ios::binary);
+    std::ostringstream contents;
+
+    contents << file.rdbuf();
+    std::cout<< contents.str() << "\n";
+    return contents.str();
 }

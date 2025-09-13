@@ -22,7 +22,6 @@ class Texture {
     unsigned int GetTextureID();
     bool SetId(unsigned int id) {return mId = id;}
 
-
     void ReplaceAsync(std::vector<unsigned char> buffer);
     void CommitUpload();  
 

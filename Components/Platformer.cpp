@@ -45,10 +45,40 @@ Platformer::Platformer(Vec2& NextPos ,Vec2& Velocity ,BoundingBox PlayerDim , st
     }
 }
 
-void Platformer::TopDownCollisionModel(Vec2& PlayerPosition,BoundingBox PlayerBound , std::vector<CollisionDim>& cols)
+void Platformer::TopDownCollisionModel(Vec2& NextPos, BoundingBox PlayerDim, std::vector<CollisionDim>& dims)
 {
-    // TODO: Make a Collsion For All side For Topdown Games
+    for (auto& cols : dims) {
+        BoundingBox TileBound{
+            cols.Position.x,
+            cols.Position.x + cols.Size.x,
+            cols.Position.y,
+            cols.Position.y + cols.Size.y
+        };
+
+        // Check overlap
+        if (PlayerDim.Right > TileBound.Left && PlayerDim.Left < TileBound.Right &&
+            PlayerDim.Bottom > TileBound.Top && PlayerDim.Top < TileBound.Bottom)
+        {
+            // Calculate overlap along each axis
+            float OverlapX1 = PlayerDim.Right - TileBound.Left;
+            float OverlapX2 = TileBound.Right - PlayerDim.Left;
+            float OverlapY1 = TileBound.Bottom - PlayerDim.Top;
+            float OverlapY2 = PlayerDim.Bottom - TileBound.Top;
+
+            // Resolve on the smaller overlap axis
+            if (std::min(OverlapX1, OverlapX2) < std::min(OverlapY1, OverlapY2)) {
+                // Horizontal
+                if (OverlapX1 < OverlapX2) NextPos.x -= OverlapX1;
+                else NextPos.x += OverlapX2;
+            } else {
+                // Vertical
+                if (OverlapY1 < OverlapY2) NextPos.y += OverlapY1;
+                else NextPos.y -= OverlapY2;
+            }
+        }
+    }
 }
+
 
 bool Platformer::GetOnGround()
 {

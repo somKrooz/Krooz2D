@@ -1,5 +1,6 @@
 #pragma once
 #include "Maths.h"
+#include "string"
 
 using uint = unsigned int;
 using cstr = const char* ;
@@ -15,6 +16,7 @@ class Shader
     uint CompileShader(cstr src , uint ShaderType);
     uint GetShaderProgram();
     void CreateShader(uint& vertex , uint& fragment);
+    static std::string LoadShaderFromFile(const char* path);
     void Use();
 
     //Access Functions

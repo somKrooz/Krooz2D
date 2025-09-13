@@ -25,6 +25,6 @@ class Platformer
 
     public:
     Platformer(Vec2& Position, Vec2& Velocity ,BoundingBox PlayerDim , std::vector<CollisionDim> dims);
-    static void TopDownCollisionModel(Vec2& PlayerPosition,BoundingBox PlayerBound , std::vector<CollisionDim>& cols);
+    static void TopDownCollisionModel(Vec2& PlayerPosition,BoundingBox PlayerDim , std::vector<CollisionDim>& cols);
     bool GetOnGround();
 };
