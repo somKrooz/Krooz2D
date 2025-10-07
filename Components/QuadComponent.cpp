@@ -2,13 +2,14 @@
 
 namespace Krooz2D
 {
-    QuadComponent::QuadComponent(TransformComponent& Trs , TextureComponent& Tex)
+    QuadComponent::QuadComponent(bool hasTexture)
     {
-        _trs = CreateRef<TransformComponent>(Trs);
-        _tex = CreateRef<TextureComponent>(Tex);
+        _buffer = CreateRef<QuadBuffer>();
+        _buffer->InitStaticQuad(true);
     }
 
-    QuadComponent::QuadComponent(TransformComponent& Trs){
-        _trs = CreateRef<TransformComponent>(Trs);
+    QuadBuffer& QuadComponent::Get()
+    {
+        return *_buffer;
     }
 }

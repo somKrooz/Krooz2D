@@ -2,19 +2,19 @@
 
 #include "Types.h"
 #include "unordered_map"
-#include <stdexcept>
+
 
 
 namespace Krooz2D{
 
     class World {
-        private:
+    private:
 
         inline static uint32 _nextid = 0;
         Ent _localEnt;
         std::unordered_map<runtime_index , std::unordered_map<uint32 , Ref<void>>> _components;
 
-        public:
+    public:
         World() = default;
         
         Ent CreateEntity() {
@@ -40,33 +40,48 @@ namespace Krooz2D{
             return true;
         }
 
-        // template<typename T>
-        // T& GetComponent(uint32 id){
-        //     auto outerIt = _components.find(typeid(T));
-        //     if (outerIt == _components.end()) {
-        //         throw std::runtime_error("Component type not found!");
-        //     }
+        template<typename T>
+        Ref<T> GetComponent(uint32 id){
+            auto outerIt = _components.find(typeid(T));
+            if (outerIt == _components.end()) {
+                throw std::runtime_error("Component type not found!");
+            }
 
-        //     auto& inner = outerIt->second;
-        //     auto innerIt = inner.find(id);
-        //     if(innerIt == inner.end()){
-        //         throw std::runtime_error("does not have this component!");
-        //     }
-        //     auto comp = std::static_pointer_cast<T>(innerIt->second);
-        //     return *comp;
-        // }
+            auto& inner = outerIt->second;
+            auto innerIt = inner.find(id);
+            if(innerIt == inner.end()){
+                throw std::runtime_error("does not have this component!");
+            }
+            auto comp = std::static_pointer_cast<T>(innerIt->second);
+            return comp;
+
+        }
 
         template<typename T>
-        std::vector<Ref<T>> GetAllComponentsOfType() {
-            std::vector<Ref<T>> result;
+        std::vector<uint32> GetAllComponentsOfTypeID() {
+            std::vector<uint32> result;
+
             auto outerIt = _components.find(typeid(T));
             if (outerIt != _components.end()) {
                 for (auto& [id, comp] : outerIt->second) {
-                    result.push_back(std::static_pointer_cast<T>(comp));
+                    result.push_back(id);
                 }
             }
             return result;
         }
+
+
+        // template<typename T>
+        // std::vector<Ref<T>> GetAllComponentsOfType() {
+        //     std::vector<Ref<T>> result;
+        //     auto outerIt = _components.find(typeid(T));
+        //     if (outerIt != _components.end()) {
+        //         for (auto& [id, comp] : outerIt->second) {
+        //             result.push_back(std::static_pointer_cast<T>(comp));
+        //         }
+        //     }
+        //     return result;
+        // }
     };
 }
 

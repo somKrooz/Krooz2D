@@ -1,6 +1,6 @@
 #pragma once
 #include "Types.h"
-
+#include "Texture.h"
 
 namespace Krooz2D{
 
@@ -8,10 +8,8 @@ namespace Krooz2D{
     {
         Ref<Texture> _tex = nullptr;
         
-        TextureComponent() = default;
-        TextureComponent(Texture& texData);
-        bool ReplaceTexture(const std::vector<uint8>& newPixels, int width, int height, int channels);
-        const Texture& Get(); 
+        TextureComponent(string path);
+        bool ReplaceTexture(TextureDescription& desc);
     };
 
 }

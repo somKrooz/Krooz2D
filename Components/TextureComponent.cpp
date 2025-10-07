@@ -1,24 +1,17 @@
 #include "TextureComponent.h"
 
-
 namespace Krooz2D
 {
-    TextureComponent::TextureComponent(Texture& texData){
-       _tex = CreateRef<Texture>(texData);
+    TextureComponent::TextureComponent(string Path){
+       _tex = CreateRef<Texture>(Path);
     }
 
-    bool TextureComponent::ReplaceTexture(const std::vector<uint8>& newPixels, int width, int height, int channels)
+    bool TextureComponent::ReplaceTexture(TextureDescription& desc)
     {
         if (!_tex) return false;
-        _tex->_pixels = newPixels;
-        _tex->_width = width;
-        _tex->_height = height;
-        _tex->_channels = channels;
-        
-        _tex->_dirty = true; 
+        _tex->Get() = std::move(desc);
         return true;
     }
-    const Texture& TextureComponent::Get(){
-        return *_tex;
-    } 
+
+
 }

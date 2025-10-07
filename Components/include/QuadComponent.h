@@ -1,18 +1,16 @@
 #pragma once
 
-#include "TextureComponent.h"
-#include "TransformComponent.h"
+#include "Buffer.h"
 
 namespace Krooz2D
 {
     struct QuadComponent
     {
-        Ref<TransformComponent> _trs = nullptr;
-        Ref<TextureComponent> _tex = nullptr;
-        
-        QuadComponent() = default;
-        QuadComponent(TransformComponent& Trs , TextureComponent& Tex);
-        QuadComponent(TransformComponent& Trs);
-    };
+        private:
+        Ref<QuadBuffer> _buffer;
 
+        public:
+        QuadComponent(bool hasTexture = true);
+        QuadBuffer& Get();
+    };
 }

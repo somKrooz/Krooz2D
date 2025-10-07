@@ -3,23 +3,26 @@
 #include "vector"
 #include "Maths.h"
 #include "typeindex"
+#include <stdexcept>
 #include "cmath"
 
 using uint32 = uint32_t; 
 using uint8 = uint8_t;
 using runtime_index = std::type_index; 
 
+using string = std::string;
+using cname = char*;
+
 struct Ent{
     uint32 _ID;
 };
 
-struct Texture{
+struct TextureDescription{
     std::vector<uint8> _pixels;
+    uint32 _id = 0;
     int _width = 128;
     int _height = 128;
     int _channels = 4;
-    bool _dirty = false;
-    uint8* Data() { return _pixels.data(); }
 };
 
 
