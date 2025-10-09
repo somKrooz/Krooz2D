@@ -15,7 +15,7 @@ using string = std::string;
 using cname = char*;
 
 struct Ent{
-	uint32 _ID;
+	uint32 id;
 };
 
 struct TextureDescription{

@@ -2,3 +2,6 @@
 main.cpp
 /.vscode
 /external/TestGlfw
+Krooz2D.h
+build.exe
+builder.c

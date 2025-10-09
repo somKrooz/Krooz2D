@@ -1,7 +1,5 @@
 
 #include "RenderSystem.h"
-#include "iostream"
-
 #include "QuadComponent.h"
 #include "TextureComponent.h"
 #include "TransformComponent.h"
@@ -14,10 +12,15 @@ Mat4 view = Mat4::identity();
 namespace Krooz2D
 {
 	void RenderSystem::SetWorld(World& world){
+			if(Debug::GetDebugMode()){
+			_debug = CreateRef<Debug>();
+			_debug->DrawState();
+		}
 		_currentWorld = CreateRef<World>(world);
 	}
 
 	void RenderSystem::Update(uint32 null){
+
 		if(_currentWorld->HasComponent<QuadComponent>()){
 
 			auto Quads = _currentWorld->GetAllComponentsOfTypeID<QuadComponent>();

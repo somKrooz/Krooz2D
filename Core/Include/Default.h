@@ -1,6 +1,14 @@
 #pragma once
 #include "Types.h"
 
+
+namespace Krooz2D::Color
+{
+	constexpr inline Vec3 RED {1.0f, 0.0f, 0.0f};
+	constexpr inline Vec3 DARKGREY {0.4f, 0.4f, 0.4f};
+	constexpr inline Vec3 KROOZ {0.1f, 0.1f, 0.1f};
+}
+
 namespace Krooz2D::Defaults
 {
 	inline string defultVertexShader = R"(

@@ -35,7 +35,6 @@ namespace Krooz2D
 							replay->reset();
 						}
 				}
-
 		}
 	}
 

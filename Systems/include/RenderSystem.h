@@ -1,6 +1,6 @@
 
 #include "World.h"
-
+#include "Debug.h"
 namespace Krooz2D
 {
 
@@ -8,6 +8,7 @@ namespace Krooz2D
 	{
 		private:
 		inline static Ref<World> _currentWorld = nullptr;
+		inline static Ref<Debug> _debug = nullptr;
 		
 		public:
 		static void SetWorld(World& word);

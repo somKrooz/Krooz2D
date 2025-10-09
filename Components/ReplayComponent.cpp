@@ -1,9 +1,16 @@
 #include "ReplayComponent.h"
+#include "Debug.h"
 
 namespace Krooz2D
 {
     bool ReplayComponent::start_recordind()
     {
+
+				if(Debug::GetDebugMode())
+				{
+					Debug::ChangeMode(EngineStateType::RECORD);
+				}
+
         if(!_SnapData.empty())
             _SnapData.clear();
 
@@ -17,6 +24,11 @@ namespace Krooz2D
     }
 
     bool ReplayComponent::end_recording(){
+
+				if(Debug::GetDebugMode())
+				{
+					Debug::ChangeMode(EngineStateType::STAGE);
+				}
         _recording = false;
         _playing = false;
         _index = 0;
@@ -26,6 +38,12 @@ namespace Krooz2D
 
     bool ReplayComponent::start_playing()
     {
+
+				if(Debug::GetDebugMode())
+				{
+					Debug::ChangeMode(EngineStateType::PLAY);
+				}
+
         if (_SnapData.empty())
             return false;
 
