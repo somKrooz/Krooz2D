@@ -4,13 +4,17 @@
 
 namespace Krooz2D{
 
-    struct TextureComponent 
-    {
-        Ref<Texture> _tex = nullptr;
-        
-        TextureComponent(string path);
-        bool ReplaceTexture(TextureDescription& desc);
-    };
+	struct TextureComponent 
+	{
+		private:
+		Ref<Texture> _tex = nullptr;
+		
+		public:
+		TextureComponent(TextureDescription& desc);
+		bool ReplaceTexture(TextureDescription& tex);
+		Texture& Get();
 
+	};
+	
 }
 

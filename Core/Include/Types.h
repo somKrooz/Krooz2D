@@ -5,6 +5,7 @@
 #include "typeindex"
 #include <stdexcept>
 #include "cmath"
+#include "string"
 
 using uint32 = uint32_t; 
 using uint8 = uint8_t;
@@ -14,17 +15,24 @@ using string = std::string;
 using cname = char*;
 
 struct Ent{
-    uint32 _ID;
+	uint32 _ID;
 };
 
 struct TextureDescription{
-    std::vector<uint8> _pixels;
-    uint32 _id = 0;
-    int _width = 128;
-    int _height = 128;
-    int _channels = 4;
+	std::vector<uint8> _pixels;
+	uint32 _id = 0;
+	int _width = 128;
+	int _height = 128;
+	int _channels = 4;
 };
 
+
+struct ShaderDesciption
+{
+	string _vertex;
+	string _fragment;
+	bool _isPath = false;
+};
 
 #include "memory"
 template<typename T>
@@ -32,5 +40,5 @@ using Ref = std::shared_ptr<T>;
 
 template<typename T , typename... Args>
 Ref<T> CreateRef(Args&&... args){
-    return std::make_shared<T>(std::forward<Args>(args)...);
+	return std::make_shared<T>(std::forward<Args>(args)...);
 }

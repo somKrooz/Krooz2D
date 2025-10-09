@@ -11,6 +11,9 @@ struct Vec2 {
     Vec2 operator-(const Vec2& v) const { return {x - v.x, y - v.y}; }
     Vec2 operator*(float s) const { return {x * s, y * s}; }
     Vec2 operator/(float s) const { return {x / s, y / s}; }
+
+		Vec2 operator-() const { return {-x, -y}; }
+
     Vec2& operator+=(const Vec2& other) {
         x += other.x;
         y += other.y;
@@ -100,7 +103,7 @@ struct Mat4 {
         Mat4 result = identity();
         float c = std::cos(radians);
         float s = std::sin(radians);
-        result.m[0] = c; result.m[4] = -s;
+        result.m[0] = c; result.m[4] = - s;
         result.m[1] = s; result.m[5] =  c;
         return result;
     }
@@ -112,7 +115,6 @@ struct Mat4 {
         return result;
     }
     
-
  Mat4 operator*(const Mat4& o) const {
     Mat4 result;
     for (int col = 0; col < 4; ++col) {

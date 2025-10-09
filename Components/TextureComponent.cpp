@@ -2,16 +2,19 @@
 
 namespace Krooz2D
 {
-    TextureComponent::TextureComponent(string Path){
-       _tex = CreateRef<Texture>(Path);
-    }
+	TextureComponent::TextureComponent(TextureDescription& desc){
+		_tex = CreateRef<Texture>(desc);
+	}
 
-    bool TextureComponent::ReplaceTexture(TextureDescription& desc)
-    {
-        if (!_tex) return false;
-        _tex->Get() = std::move(desc);
-        return true;
-    }
+	bool TextureComponent::ReplaceTexture(TextureDescription& tex)
+	{
+		_tex = CreateRef<Texture>(tex);
+		return true;
+	}
 
+	Texture& TextureComponent::Get()
+	{
+		return *_tex;
+	}
 
 }
