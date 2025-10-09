@@ -2,7 +2,7 @@
 
 namespace Krooz2D
 {
-	QuadComponent::QuadComponent(bool hasTexture, ShaderDesciption& desc)
+	QuadComponent::QuadComponent(bool hasTexture, ShaderDesciption desc)
 	{
 		_buffer = CreateRef<QuadBuffer>();
 		_buffer->InitStaticQuad(hasTexture);

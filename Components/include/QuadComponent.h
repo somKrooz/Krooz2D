@@ -13,7 +13,7 @@ namespace Krooz2D
 		Ref<Shader> _Shader;
 
 		public:
-		QuadComponent(bool hasTexture = true , ShaderDesciption& desc = Defaults::DeafultShader);
+		QuadComponent(bool hasTexture , ShaderDesciption desc);
 		QuadBuffer& Get();
 		uint32 GetShader();
 

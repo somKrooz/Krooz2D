@@ -31,4 +31,6 @@ namespace Krooz2D::Defaults
 	)";
 
 	inline ShaderDesciption DeafultShader = {defultVertexShader , defaultFragmentShader , false};
+
+
 } 

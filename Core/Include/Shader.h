@@ -7,7 +7,7 @@ namespace Krooz2D
 	class Shader
 	{
 		private:
-		uint32 _ShaderProgram;
+		uint32 _ShaderProgram = 0;
 
 		public:
 		Shader() {}
@@ -17,7 +17,7 @@ namespace Krooz2D
 		void LoadShaderFromFile(ShaderDesciption& desc);
 		void LoadFromString(ShaderDesciption& desc);
 		std::string ReadFile(string file);
-		uint32& Get();
+		uint32 Get();
 	};
 
 }

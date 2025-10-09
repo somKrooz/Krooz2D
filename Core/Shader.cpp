@@ -49,7 +49,7 @@ namespace Krooz2D
 		return buffer.str();
 	}
 
-	uint32& Shader::Get(){
+	uint32 Shader::Get(){
 		return _ShaderProgram;
 	}
 

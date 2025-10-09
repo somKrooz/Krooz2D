@@ -7,13 +7,17 @@
 #include "TransformComponent.h"
 #include "glad/glad.h"
 
+
+Mat4 projection = Mat4::ortho(0.0f, 1280, 720, 0.0f, -1.0f, 1.0f);
+Mat4 view = Mat4::identity();
+
 namespace Krooz2D
 {
 	void RenderSystem::SetWorld(World& world){
 		_currentWorld = CreateRef<World>(world);
 	}
 
-	void RenderSystem::Update(uint32 shaderProg){
+	void RenderSystem::Update(uint32 null){
 		if(_currentWorld->HasComponent<QuadComponent>()){
 
 			auto Quads = _currentWorld->GetAllComponentsOfTypeID<QuadComponent>();
@@ -22,12 +26,15 @@ namespace Krooz2D
 				auto Trs = _currentWorld->GetComponent<TransformComponent>(el);
 				auto Tex = _currentWorld->GetComponent<TextureComponent>(el);
 				auto Quad = _currentWorld->GetComponent<QuadComponent>(el);
-				
-				Tex->Get().Use();  
-				glUniform1i(glGetUniformLocation(shaderProg, "u_Texture"), 0);
 
-				GLint loc = glGetUniformLocation(shaderProg, "u_Model");
-				glUniformMatrix4fv(loc, 1, GL_FALSE, Trs->Get().value_ptr());
+				auto shaderProgram = Quad->GetShader(); 
+				glUseProgram(shaderProgram);
+				glUniformMatrix4fv(glGetUniformLocation(shaderProgram, "u_Projection"), 1, GL_FALSE, projection.value_ptr());
+    		glUniformMatrix4fv(glGetUniformLocation(shaderProgram, "u_View"), 1, GL_FALSE, view.value_ptr());
+				glUniformMatrix4fv(glGetUniformLocation(shaderProgram, "u_Model"), 1, GL_FALSE, Trs->Get().value_ptr());
+
+				Tex->Get().Use();
+				glUniform1i(glGetUniformLocation(shaderProgram, "u_Texture"), 0);
 				Quad->Get().Draw();
 			}
 		}
