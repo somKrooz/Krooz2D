@@ -26,6 +26,21 @@ namespace Krooz2D{
 			_components[typeid(T)][id] = local_comp;
 			return true;
 		}
+		template<typename T>
+		bool HasComponentId(uint32 id){
+			auto outerIt = _components.find(typeid(T));
+			if(outerIt == _components.end())
+			{
+				return false;
+			}
+			auto& inner = outerIt->second;
+			auto innerIt = inner.find(id);
+			if(innerIt == inner.end()){
+				return false;
+			}
+			return true;
+		}
+
 
 		template<typename T>
 		bool HasComponent(){

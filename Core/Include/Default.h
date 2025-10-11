@@ -29,12 +29,14 @@ namespace Krooz2D::Defaults
 
 	inline string defaultFragmentShader = R"(
 		#version 330 core
-		in vec2 TexCoord;
+		in vec2 TexCoord; 
 		out vec4 FragColor;
 		uniform sampler2D u_Texture;
+		uniform float u_alpha;
 		void main() 
 		{
-			FragColor = texture(u_Texture, TexCoord);
+			vec4 texColor = texture(u_Texture, TexCoord); 
+			FragColor = vec4(texColor.rgb, texColor.a * u_alpha); 
 		}
 	)";
 

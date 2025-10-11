@@ -12,11 +12,8 @@ namespace Krooz2D
 			}
 			_Window = glfwCreateWindow(_width, _height, _title.c_str(), nullptr, nullptr);
 			glfwMakeContextCurrent(static_cast<GLFWwindow*>(_Window));
-			glfwWindowHint(GLFW_SAMPLES, 4);
-			glfwSwapInterval(1);
 
 			gladLoadGLLoader((GLADloadproc)glfwGetProcAddress);
-			glEnable(GL_MULTISAMPLE);
 			glEnable(GL_BLEND);
 			glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
@@ -48,4 +45,3 @@ namespace Krooz2D
 			glfwSetWindowAttrib(_Window,GLFW_DECORATED , state);
 		}
 } 
-

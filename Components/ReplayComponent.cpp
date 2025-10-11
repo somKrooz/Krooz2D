@@ -61,7 +61,7 @@ namespace Krooz2D
         _global += dt;
         _duration += dt;
         
-        if (_global >= 0.1f)
+        if (_global >= 0.01f)
         {
             _SnapData.push_back({ Data.Position , Data.desc, _duration});
 							if (_SnapData.size() >= _maxSnapshots)

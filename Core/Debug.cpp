@@ -3,9 +3,9 @@
 #include "TextureComponent.h"
 #include "TransformComponent.h"
 
-
 namespace Krooz2D
 {
+
 	Debug::Debug()
 	{
 
@@ -15,7 +15,7 @@ namespace Krooz2D
 		auto stage = Texture::LoadTexture("StageMode.png");
 		auto playing = Texture::LoadTexture("Playing.png");
 		
-		State->Stage = TextureDescription();
+		State->Stage = *stage;
 		State->Playing = *playing;
 		State->Recording = *recording;
 		
@@ -30,14 +30,15 @@ namespace Krooz2D
 		Ent debbuger = _world->CreateEntity();
 		id = debbuger.id;
 		_world->AddComponent<QuadComponent>(debbuger.id);
-		_world->AddComponent<TransformComponent>(debbuger.id , Vec2(20,20) , Vec2(120,40));
+		_world->AddComponent<TransformComponent>(debbuger.id , Vec2(20,20) , Vec2(200,50));
 		_world->AddComponent<TextureComponent>(debbuger.id, State->Stage);
+		_world->AddComponent<TagComponent>(debbuger.id , "Debug");
 	}
 
 	void Debug::ChangeMode(EngineStateType mode)
 	{
 		auto state = _world->GetComponent<TextureComponent>(id);
-
+		CurrentState = !CurrentState;
 		switch (mode)
 		{
 		case EngineStateType::STAGE:

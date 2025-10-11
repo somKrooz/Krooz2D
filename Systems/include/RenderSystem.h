@@ -9,10 +9,11 @@ namespace Krooz2D
 		private:
 		inline static Ref<World> _currentWorld = nullptr;
 		inline static Ref<Debug> _debug = nullptr;
-		
+		bool IsChanged = false;
+
 		public:
 		static void SetWorld(World& word);
-		void Update(uint32 shader);
+		void Update(float d);
 	};
 
 }

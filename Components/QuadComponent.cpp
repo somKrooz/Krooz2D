@@ -11,7 +11,7 @@ namespace Krooz2D
 		if(desc._isPath){
 			_Shader->LoadShaderFromFile(desc);
 		}
-		else{
+		else{	
 			_Shader->LoadFromString(desc);
 		}
 	}

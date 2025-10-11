@@ -24,6 +24,8 @@ struct TextureDescription{
 	int _width = 128;
 	int _height = 128;
 	int _channels = 4;
+	
+	TextureDescription(){}
 };
 
 
