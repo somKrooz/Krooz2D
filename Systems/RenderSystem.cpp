@@ -15,7 +15,6 @@ namespace Krooz2D
 	void RenderSystem::SetWorld(World& world){
 			if(Debug::GetDebugMode()){
 			_debug = CreateRef<Debug>();
-			 Debug::InitWorld(world); 
 			_debug->DrawState();
 		}
 		_currentWorld = CreateRef<World>(world);
@@ -23,6 +22,21 @@ namespace Krooz2D
 
 
 void RenderSystem::Update(float dt){
+	// Needs Better System
+		float fade = 0.0f;
+    if(IsChanged != Debug::GetStateChange()){
+				fade = Debug::getopacity();
+				fade -= dt * 3.0f;
+        fade = std::clamp(fade, 0.0f, 1.0f);
+        Debug::setOpacity(fade);
+
+        if(fade <= 0.0f) {
+            Debug::setOpacity(1.0f);
+            IsChanged = Debug::GetStateChange();
+        }
+    }
+		//
+
     if (_currentWorld->HasComponent<QuadComponent>()) {
         auto Quads = _currentWorld->GetAllComponentsOfTypeID<QuadComponent>();
 
@@ -40,26 +54,11 @@ void RenderSystem::Update(float dt){
             glUniformMatrix4fv(glGetUniformLocation(shaderProgram, "u_Model"), 1, GL_FALSE, Trs->Get().value_ptr());
 
             if(_currentWorld->HasComponentId<TagComponent>(el)){
-								
-							if(IsChanged != _debug->GetStateChange()){
-								float fade = _debug->getopacity();
-								fade -= dt*5;
-								_debug->setOpacity(fade);
-								fade = std::clamp(fade , 0.0f ,1.0f);
-
-								if(fade <= 0.0f)
-								{
-									_debug->setOpacity(1.0);
-									IsChanged = _debug->GetStateChange();
-	
-								}
-								glUniform1f(uAlphaLoc, fade);
-
-							}
-            } 
-						else {
-							glUniform1f(uAlphaLoc, 1.0f);
+                glUniform1f(uAlphaLoc, fade);
+            } else {
+                glUniform1f(uAlphaLoc, 1.0f);
             }
+            
             Tex->Get().Use();
             glUniform1i(glGetUniformLocation(shaderProgram, "u_Texture"), 0);
             Quad->Get().Draw();

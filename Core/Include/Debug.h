@@ -36,10 +36,10 @@ namespace Krooz2D
 	{
 		private:
 		inline static Ref<EngineState> State = nullptr;
-		inline static bool CurrentState = false;
+		inline static int CurrentState = 0;
 		inline static uint32 id = 0;
 		inline static bool _DebugMode = false; 	
-		float opacity = 1.0f;
+		inline static float opacity = 1.0f;
 		inline static World* _world = nullptr;
 
 		public:
@@ -47,11 +47,11 @@ namespace Krooz2D
 		static void DebugMode(bool state);
 		static void InitWorld(World& world);
 
-		static bool GetStateChange(){return CurrentState;}
+		static int GetStateChange(){return CurrentState;}
 		static void ChangeMode(EngineStateType mode);
 		static bool GetDebugMode(){return _DebugMode;}
-		void setOpacity(float op){opacity = op;}
-		float& getopacity(){return opacity;}
+		static void setOpacity(float op){opacity = op;}
+		static float& getopacity(){return opacity;}
 		
 		void DrawState();
 	};

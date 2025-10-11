@@ -38,7 +38,13 @@ namespace Krooz2D
 	void Debug::ChangeMode(EngineStateType mode)
 	{
 		auto state = _world->GetComponent<TextureComponent>(id);
-		CurrentState = !CurrentState;
+		CurrentState += 1;
+
+		if(CurrentState > 10)
+		{
+			CurrentState = 0;
+		}
+		
 		switch (mode)
 		{
 		case EngineStateType::STAGE:

@@ -9,7 +9,7 @@ namespace Krooz2D
 		private:
 		inline static Ref<World> _currentWorld = nullptr;
 		inline static Ref<Debug> _debug = nullptr;
-		bool IsChanged = false;
+		int IsChanged = 0;
 
 		public:
 		static void SetWorld(World& word);
