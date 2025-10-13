@@ -2,7 +2,7 @@
 #include "QuadComponent.h"
 #include "TextureComponent.h"
 #include "TransformComponent.h"
-
+#include "TagComponent.h"
 namespace Krooz2D
 {
 
@@ -15,9 +15,9 @@ namespace Krooz2D
 		auto stage = Texture::LoadTexture("StageMode.png");
 		auto playing = Texture::LoadTexture("Playing.png");
 		
-		State->Stage = *stage;
-		State->Playing = *playing;
-		State->Recording = *recording;
+		State->Stage = stage;
+		State->Playing = playing;
+		State->Recording = recording;
 		
 	}
 	void Debug::DebugMode(bool state)
@@ -33,6 +33,7 @@ namespace Krooz2D
 		_world->AddComponent<TransformComponent>(debbuger.id , Vec2(20,20) , Vec2(200,50));
 		_world->AddComponent<TextureComponent>(debbuger.id, State->Stage);
 		_world->AddComponent<TagComponent>(debbuger.id , "Debug");
+
 	}
 
 	void Debug::ChangeMode(EngineStateType mode)

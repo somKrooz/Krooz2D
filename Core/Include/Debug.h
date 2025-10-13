@@ -4,10 +4,9 @@
 
 struct EngineState
 {
-	TextureDescription Stage;
-	TextureDescription Recording;
-	TextureDescription Playing;
-	EngineState() = default;
+	Ref<TextureDescription> Stage = nullptr;
+	Ref<TextureDescription> Recording = nullptr;
+	Ref<TextureDescription> Playing = nullptr;
 };
 
 enum EngineStateType {
@@ -15,20 +14,6 @@ enum EngineStateType {
     RECORD,
     PLAY
 };
-
-
-struct TagComponent
-{
-	string _tagname = "default";
-	TagComponent(string Tag){
-		_tagname = Tag;
-	}
-
-	string& GetTag(){
-		return _tagname;
-	}
-};
-
 
 namespace Krooz2D
 {
@@ -44,6 +29,7 @@ namespace Krooz2D
 
 		public:
 		Debug();
+		~Debug(){_world = nullptr;}
 		static void DebugMode(bool state);
 		static void InitWorld(World& world);
 

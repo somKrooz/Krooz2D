@@ -2,8 +2,19 @@
 #include "Engine.h"
 #include "algorithm"
 
+
+double Scroll_Delta = 0.0f;
+void scroll_callback(GLFWwindow* window, double xoffset, double yoffset)
+{
+    Scroll_Delta += yoffset * 0.1f; 
+		Scroll_Delta = std::clamp(static_cast<float>(Scroll_Delta) , 0.1f , 10.0f);
+}
 namespace Krooz2D
 {
+	Input::Input()
+	{
+		glfwSetScrollCallback(_Window , scroll_callback);
+	}
 	bool Input::isHold(int Key)
 	{
 		if(isLocked) return false;
@@ -37,5 +48,9 @@ namespace Krooz2D
 
 		loc.x = xpos;
 		loc.y = ypos;
+	}
+
+	void Input::GetScrollValue(float& val){
+		val = static_cast<float>(Scroll_Delta);
 	}
 }

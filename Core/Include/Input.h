@@ -9,7 +9,9 @@ namespace Krooz2D
 {
 	class Input
 	{
-		private:
+		public:
+		Input();
+		
 		inline static bool isLocked = false;
 		inline static bool keyStates[1024] = { false };
 		
@@ -18,7 +20,7 @@ namespace Krooz2D
 		static bool isHold(int KeyState);
 		static bool isReleased(int KeyState);
 		static bool isJustPressed(int KeyState);
-		
+		static void GetScrollValue(float& val);	
 		static void SetLock(bool state){isLocked = state;}
 	};
 } 

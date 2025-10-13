@@ -10,7 +10,8 @@ namespace Krooz2D{
 
 		inline static uint32 _nextid = 0;
 		Ent _localEnt;
-		std::unordered_map<runtime_index , std::unordered_map<uint32 , Ref<void>>> _components;
+		std::unordered_map<std::type_index, std::unordered_map<uint32, Ref<void>>> _components;
+
 
 	public:
 		World() = default;
@@ -23,7 +24,7 @@ namespace Krooz2D{
 		template<typename T ,typename... Args>
 		bool AddComponent(uint32 id , Args&& ... args){
 			auto local_comp = CreateRef<T>(std::forward<Args>(args)...);
-			_components[typeid(T)][id] = local_comp;
+			_components[std::type_index(typeid(T))][id] = local_comp;
 			return true;
 		}
 		template<typename T>
@@ -55,6 +56,7 @@ namespace Krooz2D{
 
 		template<typename T>
 		Ref<T> GetComponent(uint32 id){
+
 			auto outerIt = _components.find(typeid(T));
 			if (outerIt == _components.end()) {
 				throw std::runtime_error("Component type not found!");

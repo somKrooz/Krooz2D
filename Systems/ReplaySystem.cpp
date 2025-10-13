@@ -10,7 +10,7 @@ namespace Krooz2D
 {
 	void ReplaySystem::Update(World& world, float dt)
 	{
-		
+
 		auto entities = world.GetAllComponentsOfTypeID<ReplayComponent>();
 
 		for (auto& ent : entities)
@@ -29,7 +29,7 @@ namespace Krooz2D
 						trs->SetPosition(data[idx].Position);
 
 						auto tex = world.GetComponent<TextureComponent>(ent);
-						tex->ReplaceTexture(*data[idx].desc);
+						tex->ReplaceTexture(data[idx].desc);
 
 						replay->advance_index();
 						if(replay->get_index() >= data.size()-1)
@@ -79,7 +79,6 @@ namespace Krooz2D
 
 	void ReplaySystem::EndRecording(World& world)
 	{
-		printf("tiggered\n");
 		Input::SetLock(false);
 		auto entities = world.GetAllComponentsOfTypeID<ReplayComponent>();
 		for (auto& ent : entities)

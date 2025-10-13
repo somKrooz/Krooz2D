@@ -10,8 +10,8 @@ namespace Krooz2D{
 		Ref<Texture> _tex = nullptr;
 		
 		public:
-		TextureComponent(TextureDescription& desc);
-		bool ReplaceTexture(TextureDescription& tex);
+		TextureComponent(Ref<TextureDescription> desc);
+		bool ReplaceTexture(Ref<TextureDescription> tex);
 		Texture& Get();
 
 	};

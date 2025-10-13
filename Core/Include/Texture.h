@@ -11,6 +11,7 @@ namespace Krooz2D
 		public:
 		Texture(){}
 		Texture(TextureDescription& desc);
+		void ReplaceTexture(const TextureDescription& desc);
 
 		TextureDescription& Get();
 		static Ref<TextureDescription> LoadTexture(const std::string& path);

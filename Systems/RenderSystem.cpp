@@ -6,63 +6,72 @@
 #include "glad/glad.h"
 #include "Debug.h"
 #include "algorithm"
+#include "Camera.h"
+#include "TagComponent.h"
 
 Mat4 projection = Mat4::ortho(0.0f, 1280, 720, 0.0f, -1.0f, 1.0f);
-Mat4 view = Mat4::identity();
 
 namespace Krooz2D
 {
 	void RenderSystem::SetWorld(World& world){
+		_currentWorld = &world;
 			if(Debug::GetDebugMode()){
 			_debug = CreateRef<Debug>();
+			Debug::InitWorld(world);
 			_debug->DrawState();
 		}
-		_currentWorld = CreateRef<World>(world);
 	}
-
-
-void RenderSystem::Update(float dt){
-	// Needs Better System
-		float fade = 0.0f;
-    if(IsChanged != Debug::GetStateChange()){
+  void RenderSystem::Update(float dt) 
+    {
+			float fade = 0.0f;
+			if(IsChanged != Debug::GetStateChange()) {
 				fade = Debug::getopacity();
 				fade -= dt * 3.0f;
-        fade = std::clamp(fade, 0.0f, 1.0f);
-        Debug::setOpacity(fade);
+				fade = std::clamp(fade, 0.0f, 1.0f);
+				Debug::setOpacity(fade);
 
-        if(fade <= 0.0f) {
-            Debug::setOpacity(1.0f);
-            IsChanged = Debug::GetStateChange();
-        }
-    }
-		//
+				if(fade <= 0.0f) {
+					Debug::setOpacity(1.0f);
+					IsChanged = Debug::GetStateChange();
+				}
+			}
 
-    if (_currentWorld->HasComponent<QuadComponent>()) {
-        auto Quads = _currentWorld->GetAllComponentsOfTypeID<QuadComponent>();
+			if (!_currentWorld->HasComponent<QuadComponent>()) return;
 
-        for (auto& el : Quads) {
-            auto Trs = _currentWorld->GetComponent<TransformComponent>(el);
-            auto Tex = _currentWorld->GetComponent<TextureComponent>(el);
-            auto Quad = _currentWorld->GetComponent<QuadComponent>(el);
-            auto shaderProgram = Quad->GetShader(); 
-            glUseProgram(shaderProgram);
+			auto quadIDs = _currentWorld->GetAllComponentsOfTypeID<QuadComponent>();
 
-            GLint uAlphaLoc = glGetUniformLocation(shaderProgram, "u_alpha");
+			for (auto& id : quadIDs) 
+			{
+				auto Trs = _currentWorld->GetComponent<TransformComponent>(id);
+				auto Tex = _currentWorld->GetComponent<TextureComponent>(id);
+				auto Quad = _currentWorld->GetComponent<QuadComponent>(id);
+				auto shaderProgram = Quad->GetShader();
 
-            glUniformMatrix4fv(glGetUniformLocation(shaderProgram, "u_Projection"), 1, GL_FALSE, projection.value_ptr());
-            glUniformMatrix4fv(glGetUniformLocation(shaderProgram, "u_View"), 1, GL_FALSE, view.value_ptr());
-            glUniformMatrix4fv(glGetUniformLocation(shaderProgram, "u_Model"), 1, GL_FALSE, Trs->Get().value_ptr());
+				glUseProgram(shaderProgram);
 
-            if(_currentWorld->HasComponentId<TagComponent>(el)){
-                glUniform1f(uAlphaLoc, fade);
-            } else {
-                glUniform1f(uAlphaLoc, 1.0f);
-            }
-            
-            Tex->Get().Use();
-            glUniform1i(glGetUniformLocation(shaderProgram, "u_Texture"), 0);
-            Quad->Get().Draw();
-        }
-    }
-}
+				float alpha = 1.0f;
+				Mat4 proj = Camera::GetProjection();
+				Mat4 view = Camera::GetMat();
+
+			if (_currentWorld->HasComponentId<TagComponent>(id)) {
+				auto tag = _currentWorld->GetComponent<TagComponent>(id)->GetTag();
+				if (tag == "Debug") 
+				{
+					alpha = fade;
+					proj = projection;           
+					view = Mat4::identity();     
+				}
+			}
+
+			GLint uAlphaLoc = glGetUniformLocation(shaderProgram, "u_alpha");
+			glUniform1f(uAlphaLoc, alpha);
+			glUniformMatrix4fv(glGetUniformLocation(shaderProgram, "u_Model"), 1, GL_FALSE, Trs->Get().value_ptr());
+			glUniformMatrix4fv(glGetUniformLocation(shaderProgram, "u_Projection"), 1, GL_FALSE, proj.value_ptr());
+			glUniformMatrix4fv(glGetUniformLocation(shaderProgram, "u_View"), 1, GL_FALSE, view.value_ptr());
+
+			Tex->Get().Use();
+			glUniform1i(glGetUniformLocation(shaderProgram, "u_Texture"), 0);
+			Quad->Get().Draw();
+		}
+	}
 }
