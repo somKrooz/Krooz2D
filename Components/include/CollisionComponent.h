@@ -14,7 +14,7 @@ namespace Krooz2D
 	{
 		private:
 		CollisionType _Type;
-		bool AABB(TransformComponent& comp1, TransformComponent& comp2);
+		static bool AABB(TransformComponent& comp1, TransformComponent& comp2);
 
 		public:
 		CollisionComponent(CollisionType type);
