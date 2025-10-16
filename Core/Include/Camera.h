@@ -2,12 +2,13 @@
 #include "Maths.h"
 #include "TransformComponent.h"
 
+
 namespace Krooz2D
 {
 	struct Camera
 	{
 		inline static Mat4 _View = Mat4::identity();
-		inline static Mat4 _Projection = Mat4::identity();
+		inline static Mat4 _Projection = Mat4::ortho(0,1280,720,0,-1,1);
 		inline static float zoom = 1.0f;
 
 		Vec2 Position = Vec2::Zero();

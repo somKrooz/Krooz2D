@@ -30,4 +30,5 @@ find_package(OpenGL REQUIRED)
 target_link_libraries(Krooz2D
     ${CMAKE_CURRENT_SOURCE_DIR}/external/TestGlfw/lib-vc2022/glfw3.lib
     OpenGL::GL
+		windowsapp.lib
 )

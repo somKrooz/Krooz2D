@@ -28,7 +28,6 @@ namespace Krooz2D
 	}
 	bool Input::isJustPressed(int Key)
 	{
-
 		bool currentlyPressed = glfwGetKey(GetWindowGlfw(), Key) == GLFW_PRESS;
 		if(currentlyPressed && !keyStates[Key])
 		{
