@@ -1,34 +1,54 @@
 cmake_minimum_required(VERSION 3.15)
-project(Krooz2D VERSION 1.0)
+
+project(Krooz2D VERSION 2.0 LANGUAGES C CXX)
 
 set(CMAKE_CXX_STANDARD 20)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_CXX_EXTENSIONS OFF)
+
+# Output directory for the .exe
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 
-file(GLOB Comp "Components/*.cpp")
-file(GLOB Sys "Systems/*.cpp")
-file(GLOB Cor "Core/*.cpp")
+# Paths
+set(ENGINE_INCLUDE_DIR "${CMAKE_SOURCE_DIR}/Include")
+set(ENGINE_SOURCE_DIR  "${CMAKE_SOURCE_DIR}/Source")
 
-add_executable(Krooz2D
-    main.cpp
-    ${Comp}
-    ${Sys}
-    ${Cor}
-    ${CMAKE_CURRENT_SOURCE_DIR}/external/Glad/src/glad.c
+set(RGFW_INCLUDE_DIR   "${CMAKE_SOURCE_DIR}/external/RGFW")
+set(STB_INCLUDE_DIR   "${CMAKE_SOURCE_DIR}/external/STB")
+set(JSON_INCLUDE_DIR   "${CMAKE_SOURCE_DIR}/external/JSON")
+set(GLAD_INCLUDE_DIR   "${CMAKE_SOURCE_DIR}/external/GLAD/include")
+set(GLAD_SOURCE        "${CMAKE_SOURCE_DIR}/external/GLAD/src/glad.c")
+
+# Collect all .cpp files from your engine source directory
+file(GLOB_RECURSE ENGINE_SOURCES "${ENGINE_SOURCE_DIR}/*.cpp")
+
+# Main file
+set(MAIN_FILE "${CMAKE_SOURCE_DIR}/main.cpp")
+
+# Create glad as a separate static library
+add_library(glad STATIC ${GLAD_SOURCE})
+target_include_directories(glad PRIVATE ${GLAD_INCLUDE_DIR})
+
+# Create your main executable
+add_executable(${PROJECT_NAME}
+    ${ENGINE_SOURCES}
+    ${MAIN_FILE}
 )
 
-target_include_directories(Krooz2D PUBLIC
-    ${CMAKE_CURRENT_SOURCE_DIR}/Components/include
-    ${CMAKE_CURRENT_SOURCE_DIR}/Core/include
-    ${CMAKE_CURRENT_SOURCE_DIR}/Systems/include
-    ${CMAKE_CURRENT_SOURCE_DIR}/external/Glad/include
-    ${CMAKE_CURRENT_SOURCE_DIR}/external/TestGlfw/include
-    ${CMAKE_CURRENT_SOURCE_DIR}/external/STB
+# Include directories for your engine and dependencies
+target_include_directories(${PROJECT_NAME} PRIVATE
+    ${ENGINE_INCLUDE_DIR}
+	${STB_INCLUDE_DIR}
+    ${ENGINE_INCLUDE_DIR}/Core
+    ${ENGINE_INCLUDE_DIR}/Core/utility
+    ${RGFW_INCLUDE_DIR}
+	${JSON_INCLUDE_DIR}
+    ${GLAD_INCLUDE_DIR}
 )
 
-find_package(OpenGL REQUIRED)
+target_link_libraries(${PROJECT_NAME} PRIVATE glad)
 
-target_link_libraries(Krooz2D
-    ${CMAKE_CURRENT_SOURCE_DIR}/external/TestGlfw/lib-vc2022/glfw3.lib
-    OpenGL::GL
-		windowsapp.lib
-)
+# On Windows, you usually need OpenGL32.lib
+if (WIN32)
+    target_link_libraries(${PROJECT_NAME} PRIVATE opengl32)
+endif()
