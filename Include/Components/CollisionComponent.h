@@ -3,7 +3,7 @@
 #include "utility/Types.h"
 
 enum CollisionType{
-	STATIC,
+	DYNAMIC,
 	COLLIDER
 };
 

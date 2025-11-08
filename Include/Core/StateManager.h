@@ -1,5 +1,6 @@
 #pragma once
 #include "Core/World.h"
+#include "Systems/System.h"
 
 enum WorldMode {
 	TOPDOWN,

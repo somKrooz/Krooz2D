@@ -51,7 +51,7 @@ void getInfo(){
 
 	Warn("Krooz2D version ( 0.1.2 ) : Som Krooz");
 	Log("Opengl Version: {}" , version);
-	Error("GPU max Texture Limit: {}" , maxTextureSize);
+	Log("GPU max Texture Limit: {}" , maxTextureSize);
 	Log("Window Created | Opengl Context Created");
 	Log("window size width: {} height: {}" , _size.x , _size.y);
 	
@@ -106,8 +106,13 @@ float getDeltaTime(){
 	auto currentTime = std::chrono::high_resolution_clock::now();
 	std::chrono::duration<float> delta = currentTime - lastTime;
 	lastTime = currentTime;
-	
-	return delta.count(); 
+
+	float dt = delta.count();
+	const float max_dt = 0.05f;   
+    if (dt > max_dt)
+        dt = max_dt;
+
+    return dt;
 }
 
 

@@ -29,7 +29,7 @@ CollisionSystem::CollisionSystem()
 	{
 		for(auto& el : Comp.GetCollisionType())
 		{
-			if(el == CollisionType::STATIC)
+			if(el == CollisionType::DYNAMIC)
 			{
 				Dynamic.push_back({id , &Comp});
 			}
@@ -59,9 +59,13 @@ void CollisionSystem::Update(float dt)
 		for(auto& [id , comp] : Dynamic)
 		{
 			TransformComponent& trs = current->get<TransformComponent>(id);
+
+			if(!current->has<RigidBodyComponent>(id)){
+				Error("Platformer Player Must Have a RigidBodyComponent Attached");
+				exit(0);
+			}
 			RigidBodyComponent& rb = current->get<RigidBodyComponent>(id);
 			rb._onGround = false;
-
 			const float gravity = 900.0f;   
 			rb._vel.y += gravity * dt;
 

@@ -1,6 +1,6 @@
 #pragma once
 #include "Core/Window.h"
-
+#include "utility/Keys.h"
 
 #define IsPressed(key) Input::IsKeyPressed(key)
 #define IsRelased(key) Input::IsKeyPressed(key)

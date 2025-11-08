@@ -7,7 +7,7 @@
 struct Camera
 {
 	private:
-	static inline Mat4 ProjectionMatrix =  Mat4::identity();
+	static inline Mat4 ProjectionMatrix = Mat4::ortho(0,getWindowSize().x ,getWindowSize().y,0,-1,1);
 	static inline Mat4 ViewMatrix = Mat4::identity();
 
 	void ReCalculateMatrix(){
