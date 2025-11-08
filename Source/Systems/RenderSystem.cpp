@@ -37,55 +37,74 @@ RenderSystem::RenderSystem()
 	}
 }   
 
+
 void RenderSystem::Update(float dt)
 {
-    // glViewport(0, 0, getWindowSize().x, getWindowSize().y);
-    // glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    World* CurrentWorld = StateManager::GetCurrentWorld();
+    if(CurrentWorld) CurrentWorld->ProcessDestroyQueue();
 
-    // // 1️⃣ Begin FBO rendering if post-process is enabled
-    // if (_isPostProcess) {
-    //     FBuffer::CaptureStart();
-    //     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-    // }
+    BuildInstanceData();
 
-    // // 2️⃣ Render your scene into the framebuffer (or screen)
     globalShader->use();
     globalShader->setMat4("uProjection", Camera::GetProjection());
     globalShader->setMat4("uView", Camera::GetMat());
 
-    BuildInstanceData();
     Texture::UploadTexturesByIds(); 
-	glEnable(GL_BLEND);
-	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     buffer->UpdateInstance(ObjectPool);
     buffer->Draw();
-
-    // // 3️⃣ If post-processing is enabled, draw full-screen quad
-    // if (_isPostProcess) {
-	// 	krooz += dt;
-    //     FBuffer::CaptureEnd(); // binds default framebuffer (0)
-
-    //     // Clear screen before drawing the post-process quad
-    //     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-    //     // Bind the FBO texture on texture unit 0
-    //     glActiveTexture(GL_TEXTURE0);
-    //     glBindTexture(GL_TEXTURE_2D, FBuffer::GetFBOTexture());
-
-    //     // Use post-process shader
-    //     PostProcess::GetShader()->use();
-    //     PostProcess::GetShader()->setInt("screenTexture", 0);
-    //     PostProcess::GetShader()->setFloat("uTime", krooz);
-
-
-    //     // Draw the screen quad
-    //     PostProcess::Draw();
-
-    //     // Reset state (important for next frame)
-    //     glBindTexture(GL_TEXTURE_2D, 0);
-    //     glUseProgram(0);
-    // }
 }
+
+// void RenderSystem::Update(float dt)
+// {
+//     // glViewport(0, 0, getWindowSize().x, getWindowSize().y);
+//     // glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+//     // // Begin FBO rendering if post-process is enabled
+//     // if (_isPostProcess) {
+//     //     FBuffer::CaptureStart();
+//     //     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+//     // }
+
+//     // //  Render your scene into the framebuffer (or screen)
+//     globalShader->use();
+//     globalShader->setMat4("uProjection", Camera::GetProjection());
+//     globalShader->setMat4("uView", Camera::GetMat());
+
+//     BuildInstanceData();
+//     Texture::UploadTexturesByIds(); 
+// 	glEnable(GL_BLEND);
+// 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+//     buffer->UpdateInstance(ObjectPool);
+//     buffer->Draw();
+
+//     // //  If post-processing is enabled, draw full-screen quad
+//     // if (_isPostProcess) {
+// 	// 	krooz += dt;
+//     //     FBuffer::CaptureEnd(); // binds default framebuffer (0)
+
+//     //     // Clear screen before drawing the post-process quad
+//     //     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+//     //     // Bind the FBO texture on texture unit 0
+//     //     glActiveTexture(GL_TEXTURE0);
+//     //     glBindTexture(GL_TEXTURE_2D, FBuffer::GetFBOTexture());
+
+//     //     // Use post-process shader
+//     //     PostProcess::GetShader()->use();
+//     //     PostProcess::GetShader()->setInt("screenTexture", 0);
+//     //     PostProcess::GetShader()->setFloat("uTime", krooz);
+
+
+//     //     // Draw the screen quad
+//     //     PostProcess::Draw();
+
+//     //     // Reset state (important for next frame)
+//     //     glBindTexture(GL_TEXTURE_2D, 0);
+//     //     glUseProgram(0);
+//     // }
+// }
 
 
 void RenderSystem::BuildInstanceData()
@@ -95,6 +114,7 @@ void RenderSystem::BuildInstanceData()
 	{
 		ObjectPool.clear();
 		for (auto& [id, tex] : CurrentWorld->all<TextureComponent>()) {
+			 if (!CurrentWorld->IsEntityActive(id)) continue;  
 			auto& trs = CurrentWorld->get<TransformComponent>(id);
 
 			float x = trs.GetPosition().x;
@@ -111,6 +131,7 @@ void RenderSystem::BuildInstanceData()
 		exit(0);
 	}
 }
+
 
 void RenderSystem::EnablePostProcess(bool val){
 	_isPostProcess = val;

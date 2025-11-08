@@ -9,16 +9,16 @@
 class CollisionSystem : public System
 {
 	private:
-	bool AABB_Collision(TransformComponent& Target , TransformComponent& Cols);
 	void ResolveTopDown(TransformComponent& Target , TransformComponent& Cols);
 	void ResolvePlatformer(TransformComponent& Target , TransformComponent& Cols , RigidBodyComponent& Rb);
 	
 	Array<std::pair<size_t, CollisionComponent*>> Dynamic;
-	// Array<std::pair<size_t, CollisionComponent*>> colliders;
-
+	// Array<std::pair<size_t, CollisionComponent*>> Colliders;
+	
 	Array<ColData> dat;
-
+	
 	public:
+	static bool AABB_Collision(TransformComponent& Target , TransformComponent& Cols);
 	CollisionSystem();
 	void Update(float dt) override;
 };

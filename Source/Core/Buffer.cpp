@@ -68,7 +68,8 @@ void Buffer::InitInstance(Array<Instance>& instance)
 
 void Buffer::UpdateInstance(Array<Instance>& inst) {
     glBindBuffer(GL_ARRAY_BUFFER, _INS);
-    glBufferSubData(GL_ARRAY_BUFFER, 0, count * sizeof(Instance), inst.data());
+    glBufferData(GL_ARRAY_BUFFER, inst.size() * sizeof(Instance), inst.data(), GL_DYNAMIC_DRAW);
+	count = inst.size(); 
     glBindBuffer(GL_ARRAY_BUFFER, 0);
 }
 

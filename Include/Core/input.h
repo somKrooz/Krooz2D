@@ -18,6 +18,7 @@ class Input
 	static bool IsKeyPressed(int Key);
 	static bool IsKeyReleased(int Key);
 	static bool IsJustPressed(int Key);
+	static void SetInitialScroll(float value);
 	static float ScrollFactor();
 	
 };

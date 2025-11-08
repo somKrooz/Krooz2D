@@ -40,3 +40,6 @@ float Input::ScrollFactor(){
 	return scrollvalue;
 } 
 
+void Input::SetInitialScroll(float value){
+	scrollvalue = value;
+}

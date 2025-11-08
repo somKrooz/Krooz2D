@@ -23,8 +23,7 @@ CollisionSystem::CollisionSystem()
     World* currentWorld = StateManager::GetCurrentWorld();
     if(currentWorld == nullptr) Error("No World Found.. Collision System");
 
-    TiledComponent tile("Assets/Tiled.json");
-	dat = tile.GetData();
+	dat = TiledComponent::GetData();
 
 	for(auto& [id , Comp] : currentWorld->all<CollisionComponent>())
 	{
@@ -90,6 +89,7 @@ bool CollisionSystem::AABB_Collision(TransformComponent& A, TransformComponent& 
              a.maxY <= b.minY || 
              a.minY >= b.maxY);
 }
+
 
 void CollisionSystem::ResolveTopDown(TransformComponent& Dynamic, TransformComponent& Collider)
 {

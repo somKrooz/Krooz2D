@@ -1,28 +1,24 @@
 #pragma once
 #include "utility/Types.h"
 #include "Components/TransformComponent.h"
-#include "json.hpp"
 
-
-struct ColData{
+struct JsonDataImp;
+struct ColData
+{
 	Vec2 Pos;
 	Vec2 Scale;
 };
 
-using nlohmann::json;
-
 struct TiledComponent
 {
 	private:
-	json JsonCache;
-
-	int _width;
-	int _height;
-	int _Tilesize;
-	std::vector<ColData> _dat;
+	static inline JsonDataImp* Json = nullptr;
+	static inline Array<ColData> _dat = {};
 	
 	public:
-	TiledComponent(string path);
-	void GetElement(string name);
-	std::vector<ColData>& GetData();
+	static void LoadTiled(string path);
+	static void GetElement(string name);
+	static Array<ColData>& GetData();
+
+	static Array<ColData> GetInstanceData(string name);
 };
