@@ -8,8 +8,7 @@
 ##  Example
 
 A minimal example demonstrating **entity creation**, **collision handling**, **rendering**, and **input processing**.
-
-![Example — Boxy](external/Snaps/Boxy.png)
+![Example — Boxy](external/Snaps/BoxyGameplay.gif)
 
 ```cpp
 #include "Core/Window.h"
