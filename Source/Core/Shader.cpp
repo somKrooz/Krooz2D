@@ -43,6 +43,8 @@ bool Shader::CompileShader(const char* vs , const char* fr)
 	glDeleteShader(vertex);
     glDeleteShader(fragment);
 	_shader = program;
+	
+	return true;
 }
 
 uint32 Shader::GetShader(){

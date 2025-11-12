@@ -1,54 +1,42 @@
 cmake_minimum_required(VERSION 3.15)
-
-project(Krooz2D VERSION 2.0 LANGUAGES C CXX)
-
+project(Krooz2D VERSION 0.2 LANGUAGES C CXX)
 set(CMAKE_CXX_STANDARD 20)
-set(CMAKE_CXX_STANDARD_REQUIRED ON)
-set(CMAKE_CXX_EXTENSIONS OFF)
 
-# Output directory for the .exe
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
+set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
 
-# Paths
-set(ENGINE_INCLUDE_DIR "${CMAKE_SOURCE_DIR}/Include")
-set(ENGINE_SOURCE_DIR  "${CMAKE_SOURCE_DIR}/Source")
+set(ENGINE_SRC "${CMAKE_SOURCE_DIR}/Source")
+set(ENGINE_INCLUDE "${CMAKE_SOURCE_DIR}/Include")
 
-set(RGFW_INCLUDE_DIR   "${CMAKE_SOURCE_DIR}/external/RGFW")
-set(STB_INCLUDE_DIR   "${CMAKE_SOURCE_DIR}/external/STB")
-set(JSON_INCLUDE_DIR   "${CMAKE_SOURCE_DIR}/external/JSON")
-set(GLAD_INCLUDE_DIR   "${CMAKE_SOURCE_DIR}/external/GLAD/include")
-set(GLAD_SOURCE        "${CMAKE_SOURCE_DIR}/external/GLAD/src/glad.c")
+set(RGFW "${CMAKE_SOURCE_DIR}/external/RGFW")
+set(STB "${CMAKE_SOURCE_DIR}/external/STB")
+set(JSON "${CMAKE_SOURCE_DIR}/external/JSON")
 
-# Collect all .cpp files from your engine source directory
-file(GLOB_RECURSE ENGINE_SOURCES "${ENGINE_SOURCE_DIR}/*.cpp")
+set(GLAD_INCLUDE "${CMAKE_SOURCE_DIR}/external/GLAD/include")
+set(GLAD_SRC "${CMAKE_SOURCE_DIR}/external/GLAD/src/glad.c")
 
-# Main file
-set(MAIN_FILE "${CMAKE_SOURCE_DIR}/main.cpp")
+file(GLOB_RECURSE ENGINE_SOURCES "${ENGINE_SRC}/*.cpp")
 
-# Create glad as a separate static library
-add_library(glad STATIC ${GLAD_SOURCE})
-target_include_directories(glad PRIVATE ${GLAD_INCLUDE_DIR})
-
-# Create your main executable
-add_executable(${PROJECT_NAME}
-    ${ENGINE_SOURCES}
-    ${MAIN_FILE}
+add_library(Krooz2D STATIC
+	${ENGINE_SOURCES}
+	${GLAD_SRC}
 )
 
-# Include directories for your engine and dependencies
-target_include_directories(${PROJECT_NAME} PRIVATE
-    ${ENGINE_INCLUDE_DIR}
-	${STB_INCLUDE_DIR}
-    ${ENGINE_INCLUDE_DIR}/Core
-    ${ENGINE_INCLUDE_DIR}/Core/utility
-    ${RGFW_INCLUDE_DIR}
-	${JSON_INCLUDE_DIR}
-    ${GLAD_INCLUDE_DIR}
+target_include_directories(Krooz2D PUBLIC
+	${ENGINE_INCLUDE}
+    ${ENGINE_INCLUDE}/Core
+    ${STB}
+    ${RGFW}
+    ${JSON}
+    ${GLAD_INCLUDE}
 )
 
-target_link_libraries(${PROJECT_NAME} PRIVATE glad)
+target_link_libraries(Krooz2D PUBLIC -lopengl32)
 
-# On Windows, you usually need OpenGL32.lib
-if (WIN32)
-    target_link_libraries(${PROJECT_NAME} PRIVATE opengl32)
-endif()
+add_custom_command(TARGET Krooz2D POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E make_directory "${CMAKE_BINARY_DIR}/include"
+    COMMAND ${CMAKE_COMMAND} -E copy_directory
+        "${ENGINE_INCLUDE}"
+        "${CMAKE_BINARY_DIR}/include"
+    COMMENT "Copying engine headers to build/include"
+)
