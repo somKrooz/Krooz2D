@@ -60,10 +60,6 @@ void getInfo(){
 		Log("Texture Pool Size: {}" , Texture::Get().size());
 	}
 
-	if(Buffer::GetSize() > 0){
-		Log("Current Object Pool Size: {}" , Buffer::GetSize());
-	}
-
 	printf("\n");
 	printf("\n");
 }

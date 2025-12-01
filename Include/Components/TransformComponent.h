@@ -1,7 +1,7 @@
 #pragma once
 
-#include "utility/Types.h"
-#include "utility/Maths.h"
+#include "Core/utility/Types.h"
+#include "Core/utility/Maths.h"
 
 struct TransformComponent
 {

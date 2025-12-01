@@ -1,6 +1,6 @@
 #pragma once
 
-#include "utility/Types.h"
+#include "Core/utility/Types.h"
 #include "Core/Texture.h"
 
 struct TextureComponent

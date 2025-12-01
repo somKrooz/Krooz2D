@@ -19,6 +19,5 @@ struct TiledComponent
 	static void LoadTiled(string path);
 	static void GetElement(string name);
 	static Array<ColData>& GetData();
-
 	static Array<ColData> GetInstanceData(string name);
 };

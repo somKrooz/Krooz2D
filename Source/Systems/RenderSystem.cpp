@@ -2,50 +2,66 @@
 #include "Systems/RenderSystem.h"
 #include "Components/TextureComponent.h"
 #include "Core/Buffer.h"
-#include "Utility/Logs.h"
+#include "Core/Utility/Logs.h"
 #include "Core/StateManager.h"
 #include "Utility/Embed.h"
-#include "Camera.h"
+#include "Core/Camera.h"
 #include "Core/Window.h"
-#include "Core/FBuffer.h"
 #include "PostProcess.h"
 
 inline float krooz = 0.0f;
 RenderSystem::RenderSystem()
 {
-	buffer = createScope<Buffer>();
-	globalShader = createScope<Shader>(Defaults::DefaultShader);
-	buffer->InitStatic();
+    buffer = createScope<GPU_LAYOUT>();
+    globalShader = createScope<Shader>(Defaults::DefaultShader);
+
+    buffer->array = createScope<vertexArray>();
+    buffer->buf   = createScope<vertexBuffer>();
+    buffer->ins   = createScope<vertexBuffer>();
+
+    buffer->array->init();  
+    buffer->buf->init();     
+    buffer->ins->init();     
+
+	// start quad
+    buffer->array->bind();
+    buffer->buf->bind();
+    buffer->buf->push(quad, DrawMode::STATIC);
+    buffer->array->push(0, 2, 4 * sizeof(float), (void*)0);        
+    buffer->array->push(1, 2, 4 * sizeof(float), (void*)(2 * sizeof(float)));
+
+    buffer->array->unbind();
+    buffer->ins->bind();
+	// end quad
+
 	globalShader->use();
-	BuildInstanceData();
+    BuildInstanceData();
 
+    buffer->ins->push(ObjectPool, DrawMode::DYNAMIC);
+    buffer->array->bind();
+	buffer->array->push(2,2,sizeof(Instance) , (void*)0);
+	buffer->array->divisor(2);
+	buffer->array->push(3,2,sizeof(Instance) , (void*)(2*sizeof(float)));
+    buffer->array->divisor(3);
+	buffer->array->push(4,1,sizeof(Instance) , (void*)(3*sizeof(float)));
+    buffer->array->divisor(4);
 
-	buffer->InitInstance(ObjectPool);
-	Texture::UploadTexturesByIds(); 
+    buffer->array->unbind();
+    buffer->ins->unbind();
 
-	int samplers[32];
-	for (int i = 0; i < 32; ++i)
-		samplers[i] = i;
-	
-	globalShader->use();
-	globalShader->setTex32("tex", samplers);
-	getInfo();
+    Texture::UploadTexturesByIds();
+    int samplers[32];
+    for (int i = 0; i < 32; ++i) samplers[i] = i;
+    globalShader->use();
+    globalShader->setTex32("tex", samplers);
 
-	if(_isPostProcess){
-		FBuffer::Init();
-		PostProcess::BuildPostQuad();
-	}
-}   
+    getInfo();
+}
 
 void RenderSystem::Update(float dt)
 {
     glViewport(0, 0, getWindowSize().x, getWindowSize().y);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-    if (_isPostProcess) {
-        FBuffer::CaptureStart();
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-    }
 
     globalShader->use();
     globalShader->setMat4("uProjection", Camera::GetProjection());
@@ -55,27 +71,12 @@ void RenderSystem::Update(float dt)
     Texture::UploadTexturesByIds(); 
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-    buffer->UpdateInstance(ObjectPool);
-    buffer->Draw();
+    
+	buffer->ins->bind();
+	buffer->ins->push(ObjectPool , DrawMode::DYNAMIC);
 
-    if (_isPostProcess) {
-		krooz += dt;
-        FBuffer::CaptureEnd();
-
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-        glActiveTexture(GL_TEXTURE0);
-        glBindTexture(GL_TEXTURE_2D, FBuffer::GetFBOTexture());
-
-        PostProcess::GetShader()->use();
-        PostProcess::GetShader()->setInt("screenTexture", 0);
-        PostProcess::GetShader()->setFloat("uTime", krooz);
-
-        PostProcess::Draw();
-
-        glBindTexture(GL_TEXTURE_2D, 0);
-        glUseProgram(0);
-    }
+	buffer->array->bind();
+    DrawBuffer::DrawInstance(ObjectPool.size());
 }
 
 
@@ -99,8 +100,7 @@ void RenderSystem::BuildInstanceData()
 	}	
 
 	if(CurrentWorld == nullptr){
-		Error("Set Current World Context In StateManager...");
-		exit(0);
+		Error("Set Current World Context In StateManager...");;
 	}
 }
 

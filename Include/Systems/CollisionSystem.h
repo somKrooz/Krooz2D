@@ -11,9 +11,7 @@ class CollisionSystem : public System
 	private:
 	void ResolveTopDown(TransformComponent& Target , TransformComponent& Cols);
 	void ResolvePlatformer(TransformComponent& Target , TransformComponent& Cols , RigidBodyComponent& Rb);
-	
 	Array<std::pair<size_t, CollisionComponent*>> Dynamic;
-	// Array<std::pair<size_t, CollisionComponent*>> Colliders;
 	
 	Array<ColData> dat;
 	

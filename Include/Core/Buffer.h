@@ -1,23 +1,51 @@
 #pragma once
-#include "utility/Types.h"
+#include "Core/utility/Types.h"
+#include "cassert"
 
-class Buffer
+enum DrawMode
+{
+	STATIC = 0x88E4,
+	DYNAMIC = 0x88E8,
+	STREAM = 0x88E0,
+};
+
+
+struct vertexArray
 {
 	private:
-	uint32 _VAO;
-	uint32 _VBO;
-	uint32 _INS;
-	Instance* _mappedPtr = nullptr;
-	size_t _instanceSize = 0;
-	size_t maxCapacity;
-	static inline size_t count = 0;
+	uint32 _vao;
 
 	public:
-	Buffer();
-	~Buffer();
-	void InitStatic();
-	void UpdateInstance(Array<Instance>& inst);
-	void InitInstance(Array<Instance>& instance);
-	static int GetSize();
-	void Draw();
+	vertexArray();
+	~vertexArray();
+	void init();
+	void bind();
+	void unbind();
+	void push(int index , int size, int stride , const void* pointer);
+	void divisor(int index);
+
+};
+
+struct vertexBuffer
+{
+	private:
+	uint32 _vbo;
+
+	public:
+	vertexBuffer();
+	~vertexBuffer();
+	
+	void init();
+	void bind();
+	void unbind();
+
+	template<typename T>
+	void push(Array<T>& arr , DrawMode mode);
+};
+
+
+struct DrawBuffer
+{
+	static void DrawInstance(size_t count);
+	static void DrawSingle();
 };

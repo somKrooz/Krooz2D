@@ -6,11 +6,23 @@
 #include "Core/Shader.h"
 #include "Systems/System.h"
 
+
+struct GPU_LAYOUT{
+	Scope<vertexArray> array;
+	Scope<vertexBuffer> buf;
+	Scope<vertexBuffer> ins;
+	
+	GPU_LAYOUT() = default; 
+
+};
+
+
 class RenderSystem : public System
 {
 	private:
-	Scope<Buffer> buffer = nullptr;
+	Scope<GPU_LAYOUT> buffer = nullptr;
 	Scope<Shader> globalShader = nullptr;
+
 	Array<Instance> ObjectPool;	
 
 	static inline bool _isPostProcess = false;	

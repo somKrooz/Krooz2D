@@ -1,84 +1,73 @@
 #include "glad/glad.h"
 #include "Core/Buffer.h"
 
-Buffer::Buffer()
-{
-	glGenBuffers(1,&_VBO);
-	glGenBuffers(1,&_INS);
-	glGenVertexArrays(1,&_VAO);
-}
-Buffer::~Buffer()
-{
-	glDeleteBuffers(1,&_VBO);
-	glDeleteBuffers(1,&_INS);
-	glDeleteVertexArrays(1,&_VAO);
+/// @brief  Vertex Array
+vertexArray::vertexArray(){
+	glGenVertexArrays(1, &_vao);
 }
 
-void Buffer::InitStatic()
-{
-	glBindVertexArray(_VAO);
+void vertexArray::init(){
+	glGenVertexArrays(1, &_vao);
 
-	Array<float> vertex = {
-		0.0f, 0.0f, 0.0f, 0.0f,
-		1.0f, 0.0f, 1.0f, 0.0f,
-		1.0f, 1.0f, 1.0f, 1.0f,
+}
+vertexArray::~vertexArray(){
+	glDeleteVertexArrays(1, &_vao);
+}
+void vertexArray::bind(){
+	glBindVertexArray(_vao);
+}
 
-		0.0f, 0.0f, 0.0f, 0.0f,
-		1.0f, 1.0f, 1.0f, 1.0f,
-		0.0f, 1.0f, 0.0f, 1.0f
-	};
-	glBindBuffer(GL_ARRAY_BUFFER, _VBO);
-	glBufferData(GL_ARRAY_BUFFER, vertex.size() * sizeof(float), vertex.data(), GL_STATIC_DRAW);
+void vertexArray::unbind(){
+	glBindVertexArray(0);
+}
 
-	
-	glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void*)0);
-	glEnableVertexAttribArray(0);
+void vertexArray::push(int index , int size, int stride , const void* pointer){
+	glVertexAttribPointer(index , size , GL_FLOAT , GL_FALSE, stride , pointer);
+	glEnableVertexAttribArray(index);
+}
 
-	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void*)(2 * sizeof(float)));
-	glEnableVertexAttribArray(1);
-	
-	glBindVertexArray(0);   
+void vertexArray::divisor(int index){
+	glVertexAttribDivisor(index , 1);
 }
 
 
 
-void Buffer::InitInstance(Array<Instance>& instance)
-{
-	
-    count = instance.size();
-    glBindVertexArray(_VAO);
+/// @brief Vertex Buffer 
+vertexBuffer::vertexBuffer(){
+	glGenBuffers(1, &_vbo);
+}
+vertexBuffer::~vertexBuffer(){
+	glDeleteBuffers(1,&_vbo);
+}
+void vertexBuffer::init(){
+	glGenBuffers(1, &_vbo);
 
-    glBindBuffer(GL_ARRAY_BUFFER, _INS);
-    glBufferData(GL_ARRAY_BUFFER, instance.size() * sizeof(Instance), instance.data(), GL_DYNAMIC_DRAW);
-
-    glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(Instance), (void*)0);
-    glEnableVertexAttribArray(2);
-    glVertexAttribDivisor(2, 1); 
-
-	glVertexAttribPointer(3, 2, GL_FLOAT, GL_FALSE,sizeof(Instance), (void*)(2 * sizeof(float)));
-    glEnableVertexAttribArray(3);
-    glVertexAttribDivisor(3, 1);
-	
-	glVertexAttribIPointer(4, 1, GL_INT, sizeof(Instance), (void*)offsetof(Instance, id));
-	glEnableVertexAttribArray(4);
-	glVertexAttribDivisor(4, 1);
-
-    glBindVertexArray(0);
 }
 
-void Buffer::UpdateInstance(Array<Instance>& inst) {
-    glBindBuffer(GL_ARRAY_BUFFER, _INS);
-    glBufferData(GL_ARRAY_BUFFER, inst.size() * sizeof(Instance), inst.data(), GL_DYNAMIC_DRAW);
-	count = inst.size(); 
-    glBindBuffer(GL_ARRAY_BUFFER, 0);
+void vertexBuffer::bind(){
+	glBindBuffer(GL_ARRAY_BUFFER , _vbo);
 }
 
-void Buffer::Draw()
-{
-    glBindVertexArray(_VAO);
-    glDrawArraysInstanced(GL_TRIANGLES, 0, 6, count);
+void vertexBuffer::unbind(){
+	glBindBuffer(GL_ARRAY_BUFFER , 0);
 }
 
-int Buffer::GetSize(){
-	return count;
+template<typename T>
+void vertexBuffer::push(Array<T>& arr , DrawMode mode){
+	assert(arr.size() > 0 && "Vector size must be greater than 0");
+	glBufferData(GL_ARRAY_BUFFER , arr.size() * sizeof(T), arr.data() , mode);
+}
+
+template void vertexBuffer::push<float>(Array<float>&, DrawMode);
+template void vertexBuffer::push<Instance>(Array<Instance>&, DrawMode);
+
+
+
+/// @brief Buffer Draw Calls
+void DrawBuffer::DrawInstance(size_t count){
+	glDrawArraysInstanced(GL_TRIANGLES , 0 , 6 , count);
+}
+
+void DrawBuffer::DrawSingle(){
+	glDrawArrays(GL_TRIANGLES , 0 , 6);
 }

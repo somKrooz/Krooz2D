@@ -63,3 +63,13 @@ struct Instance
 	float sx,sy;
 	int id;
 };
+
+inline static Array<float> quad = {
+	0.0f, 0.0f, 0.0f, 0.0f,
+	1.0f, 0.0f, 1.0f, 0.0f,
+	1.0f, 1.0f, 1.0f, 1.0f,
+
+	0.0f, 0.0f, 0.0f, 0.0f,
+	1.0f, 1.0f, 1.0f, 1.0f,
+	0.0f, 1.0f, 0.0f, 1.0f
+};
