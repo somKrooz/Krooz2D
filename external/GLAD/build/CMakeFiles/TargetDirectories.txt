@@ -1,0 +1,3 @@
+E:/prog/KroozEngine/External/GLAD/build/CMakeFiles/glad.dir
+E:/prog/KroozEngine/External/GLAD/build/CMakeFiles/edit_cache.dir
+E:/prog/KroozEngine/External/GLAD/build/CMakeFiles/rebuild_cache.dir

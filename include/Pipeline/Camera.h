@@ -1,0 +1,21 @@
+#pragma once
+#include "Utility/Types.h"
+#include "Utility/Maths.h"
+#include "Components/TransformComponent.h"
+struct Camera
+{
+	inline static Mat4 viewMatrix = Mat4::identity();
+	inline static Mat4 projectionMatrix = Mat4::identity();
+	inline static bool isCamera = false;
+
+	Vec2 Position = Vec2::Zero();
+	float Zoom = 1.0f;
+	TransformComponent* local = nullptr;
+
+	Camera();
+	void setTarget(TransformComponent& trs);
+	void Update(float delta);
+	static bool isCameraExist();
+	static Mat4& GetView();
+	static Mat4& GetProjection();
+};
