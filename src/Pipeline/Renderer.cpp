@@ -45,31 +45,31 @@ Renderer::Renderer(Scene& scene)
 	buffer->vao.Push(3, 2, sizeof(Instance), (void*)(2 * sizeof(float)));
 	buffer->vao.Divisor(3);
 
-	buffer->vao.Push(4, 1, sizeof(Instance), (void*)(4 * sizeof(float)));
+	buffer->vao.Push(4, 1, sizeof(Instance), (void*)(offsetof(Instance , id)));
 	buffer->vao.Divisor(4);
 
-	buffer->vao.Push(5, 1, sizeof(Instance), (void*)(4 * sizeof(float) + 4)); 
-	buffer->vao.Divisor(5);
+	// buffer->vao.Push(5, 1, sizeof(Instance), (void*)(4 * sizeof(float) + 4)); 
+	// buffer->vao.Divisor(5);
 
-	buffer->vao.Push(
-    6,
-    2,
-    sizeof(Instance),
-    (void*)offsetof(Instance, uvox)
-	);
-	buffer->vao.Divisor(6);
+	// buffer->vao.Push(
+    // 6,
+    // 2,
+    // sizeof(Instance),
+    // (void*)offsetof(Instance, uvox)
+	// );
+	// buffer->vao.Divisor(6);
 
-	buffer->vao.Push(
-		7,
-		2,
-		sizeof(Instance),
-		(void*)offsetof(Instance, uvsx)
-	);
-	buffer->vao.Divisor(7);
+	// buffer->vao.Push(
+	// 	7,
+	// 	2,
+	// 	sizeof(Instance),
+	// 	(void*)offsetof(Instance, uvsx)
+	// );
+	// buffer->vao.Divisor(7);
 
-	buffer->vao.unBind();
+	// buffer->vao.unBind();
 
-	TextureManager::createDefaultTexture();
+	// TextureManager::createDefaultTexture();
 }
 
 void Renderer::Update(Shader* shader, float delta)
@@ -92,8 +92,7 @@ void Renderer::Update(Shader* shader, float delta)
 	while(AsyncTexture::HasCompleted())
 	{
 		auto image = AsyncTexture::GetResults();
-		auto handle = TextureManager::createBindlessHandle(image.image.get(),image.tex);
-		printf("Setting: %lu %llu\n" ,image.image->id ,  image.tex->handle);
+		auto handle = TextureManager::CreateTextureHandle(image.image.get());
 		CurrentWorld->get<TextureComponent>(image.tex->entid).ReplaceData(handle);
 	}
 	
@@ -106,7 +105,6 @@ void Renderer::Update(Shader* shader, float delta)
 	buffer->ins.Push(Objects, dynamicDraw);
 	buffer->vao.Bind();
 	BufferRenderCall::DrawDyamic(Objects.size());
-	TextureManager::processDelete();
 }
 
 
@@ -120,38 +118,50 @@ void Renderer::BuildMeshData() {
 
 		handle = CurrentWorld->get<TextureComponent>(id).GetHandle();
 
-		if(CurrentWorld->has<AnimationComponent>(id))
-		{
-			auto& anim = CurrentWorld->get<AnimationComponent>(id);
-			auto* animation = anim.Get();
-			offset = GetUVOffset(
-				anim.GetFrameNumber(),
-				animation->column,
-				animation->countX,
-				animation->countY
-			);
+		// if(CurrentWorld->has<AnimationComponent>(id))
+		// {
+		// 	auto& anim = CurrentWorld->get<AnimationComponent>(id);
+		// 	auto* animation = anim.Get();
+		// 	offset = GetUVOffset(
+		// 		anim.GetFrameNumber(),
+		// 		animation->column,
+		// 		animation->countX,
+		// 		animation->countY
+		// 	);
 
-			scale = Vec2(
-				1.0f / animation->countX,
-				1.0f / animation->countY
-			);
-		}
+		// 	scale = Vec2(
+		// 		1.0f / animation->countX,
+		// 		1.0f / animation->countY
+		// 	);
+		// }
+        // if (handle == 0) {
+        //     handle = TextureManager::GetDefaultHandle();
+        // }
 
-        if (handle == 0) {
-            handle = TextureManager::GetDefaultHandle();
-        }
-        
-        Objects.push_back({
-            trs.GetPosition().x,
-            trs.GetPosition().y,
-            trs.GetScale(),
-            trs.GetScale(),
-            (uint32_t)(handle & 0xFFFFFFFF),
-            (uint32_t)((handle >> 32) & 0xFFFFFFFF),
-			offset.x,
-			offset.y,
-			scale.x,
-			scale.y
-        });
+		Objects.push_back({
+			trs.GetPosition().x,
+				trs.GetPosition().y,
+				trs.GetScale(),
+				trs.GetScale(),
+				(float)handle
+			// (uint32_t)(handle & 0xFFFFFFFF),
+            // (uint32_t)((handle >> 32) & 0xFFFFFFFF),
+			// offset.x,
+			// offset.y,
+			// scale.x,
+			// scale.y
+		});
+		// Objects.push_back({
+        //     trs.GetPosition().x,
+        //     trs.GetPosition().y,
+        //     trs.GetScale(),
+        //     trs.GetScale(),
+        //     (uint32_t)(handle & 0xFFFFFFFF),
+        //     (uint32_t)((handle >> 32) & 0xFFFFFFFF),
+		// 	offset.x,
+		// 	offset.y,
+		// 	scale.x,
+		// 	scale.y
+        // });
     }
 }

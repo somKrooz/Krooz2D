@@ -82,20 +82,37 @@ struct Texture
 	u64 handle;
 };
 
+
 struct Instance
 {
 	float x;
 	float y;
 	float sx;
 	float sy;
-	uint32_t handleLow;   
-    uint32_t handleHigh; 
+	float id;
+	// uint32_t handleLow;   
+    // uint32_t handleHigh; 
 
-	float uvox;
-	float uvoy;
-	float uvsx;
-	float uvsy;
+	// float uvox;
+	// float uvoy;
+	// float uvsx;
+	// float uvsy;
 };
+
+// struct Instance
+// {
+// 	float x;
+// 	float y;
+// 	float sx;
+// 	float sy;
+// 	uint32_t handleLow;   
+//     uint32_t handleHigh; 
+
+// 	float uvox;
+// 	float uvoy;
+// 	float uvsx;
+// 	float uvsy;
+// };
 
 inline static std::vector<float> quad = {
 	0.0f, 0.0f, 0.0f, 0.0f,

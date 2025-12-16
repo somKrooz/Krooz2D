@@ -19,10 +19,6 @@
 #include "Components/AnimationComponent.h"
 
 
-///// TODO
-// Texture Data is Hidden Before Creation Bad
-// Texture Swap Will Work But Each Iter Need load From File
-// Render Doc Dont give a fuck about captures why? 
 
 float GetDelta()
 {
@@ -52,7 +48,7 @@ int main(void)
 	
     RGFW_window* window = RGFW_createWindow("krooz", 0, 0, 1280, 720, RGFW_windowOpenGL);
     gladLoadGLLoader((GLADloadproc)RGFW_getProcAddress_OpenGL);
-    Shader shader(Default::vertexshader, Default::fragmentshader);
+    Shader shader(LegacyDefault::vertexshader, LegacyDefault::fragmentshader);
     Scene scene;
 	
 	Texture tex = {0};
