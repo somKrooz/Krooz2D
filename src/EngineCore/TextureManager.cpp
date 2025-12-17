@@ -5,7 +5,11 @@
 static int index = 0;
 int TextureManager::CreateTextureHandle(ImageResource *image) {
     u32 id = 0;
+    int currentIndex = index;
     glGenTextures(1, &id);
+
+    glActiveTexture(GL_TEXTURE0 + index);
+    glBindTexture(GL_TEXTURE_2D, id);
     
     glBindTexture(GL_TEXTURE_2D, id);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
@@ -16,20 +20,15 @@ int TextureManager::CreateTextureHandle(ImageResource *image) {
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 
                  image->width, image->height, 
                  0, GL_RGBA, GL_UNSIGNED_BYTE, 
-                 image->Get());
+    image->Get());
     
-
-    glActiveTexture(GL_TEXTURE0 + index);
-    glBindTexture(GL_TEXTURE_2D, id);
-    
-    int currentIndex = index;
-    index++;
     image->id = id;
-
+    
     std::string tex = "tex[" + std::to_string(index) + "]";
     int location = glGetUniformLocation(Shader::Get(), tex.c_str());
-
     glUniform1i(location, currentIndex);
+    
+    index++;
     return currentIndex;
 }
 
