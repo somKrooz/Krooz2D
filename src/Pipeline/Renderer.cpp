@@ -8,16 +8,8 @@
 #include "Utility/Maths.h"
 #include "Pipeline/Camera.h"
 
-#define LEGACY
 Mat4 Ortho = Mat4::ortho(0, 1280, 720, 0, -1, 1);
 Mat4 View = Mat4::identity();
-
-
-#define GL_CHECK(x) \
-  do { x; GLenum e = glGetError(); \
-  if (e != GL_NO_ERROR) printf("GL error %d at %s:%d\n", e, __FILE__, __LINE__); } while(0)
-
-
 
 Renderer::Renderer(Scene& scene)
 {
@@ -90,18 +82,22 @@ void Renderer::Update(Shader* shader, float delta)
 		auto Result = AsyncTexture::GetResults();
 		#ifdef LEGACY
 		auto handle = TextureManager::CreateTextureHandle(Result.image.get());
-		CurrentWorld->get<TextureComponent>(Result.Ent).ReplaceData(handle);
+		if(CurrentWorld->has<TextureComponent>(Result.Ent)){
+			CurrentWorld->get<TextureComponent>(Result.Ent).ReplaceData(handle);
+		}
 		TextureManager::Push(Result.Ent , handle);
-
 
 		#else
 		auto handle = TextureManager::CreateBindLess(Result.image.get());
-		CurrentWorld->get<TextureComponent>(Result.Ent).ReplaceData(handle);
+		if(CurrentWorld->has<TextureComponent>(Result.Ent)){
+			CurrentWorld->get<TextureComponent>(Result.Ent).ReplaceData(handle);
+		}
 		TextureManager::Push(Result.Ent ,handle);
 		#endif
 
 		printf("Current Size: %lu\n", TextureManager::GetSize());
 	}
+	
 	BuildMeshData();
 	#ifdef LEGACY
 	buffer->ins.Bind();
@@ -112,38 +108,10 @@ void Renderer::Update(Shader* shader, float delta)
 	buffer->ins.Bind();
 	buffer->ins.Push(BindlessObjects, dynamicDraw);
 	buffer->vao.Bind();
-	GL_CHECK(glUseProgram(shader->Get()));
 	BufferRenderCall::DrawDyamic(BindlessObjects.size());
 	#endif
 }
 
-
-// void Renderer::BuildMeshData()
-// {
-//     BindlessObjects.clear();
-
-//     for (auto& [id, trs] : CurrentWorld->all<TransformComponent>())
-//     {
-//         u64 handle = CurrentWorld
-//             ->get<TextureComponent>(id)
-//             .GetHandle();
-
-//         // ❗ CRITICAL: never push invalid bindless handles
-//         if (handle == 0)
-//             continue;
-
-//         BindlessObjects.push_back({
-//             trs.GetPosition().x,
-//             trs.GetPosition().y,
-//             trs.GetScale(),
-//             trs.GetScale(),
-
-//             // split 64-bit bindless handle
-//             static_cast<uint32_t>(handle & 0xFFFFFFFFu),
-//             static_cast<uint32_t>(handle >> 32)
-//         });
-//     }
-// }
 
 void Renderer::BuildMeshData() {
 	Objects.clear();
@@ -152,8 +120,7 @@ void Renderer::BuildMeshData() {
 	for (auto& [id, trs] : CurrentWorld->all<TransformComponent>()) {
 		u64 handle = CurrentWorld->get<TextureComponent>(id).GetHandle();
 
-		printf("%llu\n", handle);
-#ifdef LEGACY
+	#ifdef LEGACY
 		Objects.push_back({
 			trs.GetPosition().x,
 			trs.GetPosition().y,
@@ -168,14 +135,12 @@ void Renderer::BuildMeshData() {
 			trs.GetPosition().y,
 			trs.GetScale(),
 			trs.GetScale(),
-			static_cast<uint32_t>(handle & 0xFFFFFFFFu),
+			static_cast<uint32_t>(handle & 0xFFFFFFFF), //0xFFFFFFFFu
             static_cast<uint32_t>(handle >> 32)
 		});
 	#endif
-		
     }
 }
-
 
 // buffer->vao.Push(
 // 6,

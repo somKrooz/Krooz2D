@@ -55,21 +55,51 @@ int main(void)
 
 	Scene scene;
 
-	ent enemy = scene.create();
-	auto ssc = AsyncTexture::Enqueue_texture("Assets/Tex_0.png" , enemy);
-	scene.add<TransformComponent>(enemy , Vec2(0,0) , Vec2(ssc._width,ssc._height));
-	scene.add<TextureComponent>(enemy);
+	// ent enemy = scene.create();
+	// auto ssc = AsyncTexture::Enqueue_texture("Assets/Tex_0.png" , enemy);
+	// scene.add<TransformComponent>(enemy , Vec2(0,0) , Vec2(100,100));
+	// scene.add<TextureComponent>(enemy);
 
 	ent ttx = scene.create();
-	scene.add<TextureComponent>(ttx);
-	auto hello = AsyncTexture::Enqueue_texture("Assets/boxy.png" , ttx);
+	AsyncTexture::Enqueue_texture("Assets/boxy.png" , ttx);
+
+	ent rc = scene.create();
+	AsyncTexture::Enqueue_texture("Assets/Tex_0.png" , rc);
 	
+	vec<ent> ids;
+	constexpr int COLS = 40;      // entities per row
+	constexpr float SIZE = 50.0f;
+	constexpr float PADDING = 4.0f;
+
+	for (int i = 0; i < 1000; i++)
+	{
+		int x = i % COLS;
+		int y = i / COLS;
+
+		Vec2 pos;
+		pos.x = x * (SIZE + PADDING);
+		pos.y = y * (SIZE + PADDING);
+
+		ent id = scene.create();
+		scene.add<TransformComponent>(id, pos, Vec2(SIZE, SIZE));
+		scene.add<TextureComponent>(id);
+
+		ids.push_back(id);
+	}
+	// for (int i = 0; i < 1000; i++)
+	// {
+	// 	ent id = scene.create();
+	// 	scene.add<TransformComponent>(id , Vec2(100,100) , Vec2(50,50));
+	// 	scene.add<TextureComponent>(id);
+	// 	ids.push_back(id);
+	// }
+	// AsyncTexture::Enqueue_texture("Assets/boxy.png" , player);
 
     Renderer render(scene);
-	Camera cam;
+	// Camera cam;
 	RGFW_event event;
 	bool isMoving = false;
-	cam.setTarget(scene.get<TransformComponent>(enemy));
+	// cam.setTarget(scene.get<TransformComponent>(enemy));
 
 	Vec2 TargetPos = Vec2::Zero();
 
@@ -80,19 +110,20 @@ int main(void)
 		RGFW_window_checkEvent(window , &event);
 		
 		float dt = GetDelta();
-		cam.Update(dt);
-		
+		if(AsyncTexture::HasCompleted())
+		{
+			for(auto i : ids)
+			{
+				u64 handle = TextureManager::Get(ttx);
+				scene.get<TextureComponent>(i).ReplaceData(handle);
+
+			}
+		}
+
 		if (Input::IsKeyPressed((int)('w')))
 		{
-			u64 handle = TextureManager::Get(ttx);
-			printf("%llu\n", handle);
-			scene.get<TextureComponent>(enemy).ReplaceData(handle);
-		}
-		if (Input::IsKeyPressed((int)('d')))
-		{
-			u64 handle = TextureManager::Get(enemy);
-			printf("%llu\n", handle);
-			scene.get<TextureComponent>(enemy).ReplaceData(handle);
+			u64 handle = TextureManager::Get(rc);
+			scene.get<TextureComponent>(ids[0]).ReplaceData(handle);
 		}
 
         render.Update(&shader, dt);
@@ -104,6 +135,20 @@ int main(void)
     RGFW_window_close(window);
     return 0;
 }
+
+		// cam.Update(dt);
+		
+		// if (Input::IsKeyPressed((int)('w')))
+		// {
+		// 	u64 handle = TextureManager::Get(ttx);
+		// 	scene.get<TextureComponent>(enemy).ReplaceData(handle);
+		// }
+		// if (Input::IsKeyPressed((int)('d')))
+		// {
+		// 	u64 handle = TextureManager::Get(enemy);
+		// 	scene.get<TextureComponent>(enemy).ReplaceData(handle);
+		// }
+
 
 		// frametime += dt;
 		// // printf("st: %.5f\n" , frametime);

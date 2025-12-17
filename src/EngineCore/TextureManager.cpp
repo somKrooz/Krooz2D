@@ -2,8 +2,8 @@
 #include "External/OpenglBind.h"
 #include "EngineCore/Shader.h"
 
-static int index = 0;
 int TextureManager::CreateTextureHandle(ImageResource *image) {
+    static int index = 0;
     u32 id = 0;
     int currentIndex = index;
     glGenTextures(1, &id);
