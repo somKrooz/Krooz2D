@@ -45,7 +45,6 @@ void ChangeBulkTexture(Scene& sc , vec<u32>& vec , u32 tex)
 } 
 
 
-
 int main(void) 
 {
     RGFW_window* window = RGFW_createWindow("krooz", 0, 0, 1280, 720, RGFW_windowOpenGL);
@@ -77,7 +76,7 @@ int main(void)
 	vec<ent> ids;
 	constexpr int COUNT = 10000;
 	constexpr int COLS  = 150;
-	constexpr int ROWS  = (COUNT + COLS - 1) / COLS;
+	constexpr int ROWS  =(COUNT + COLS - 1) / COLS;
 
 	constexpr float TILE_SIZE = 10.0f; 
 	constexpr float SPACING = 2.0f;    
@@ -104,11 +103,9 @@ int main(void)
 	RGFW_event event;
 	cam.setTarget(scene.get<TransformComponent>(ids[0]));
 
-	
 	bool isMoving = false;
 	bool randomized = false;
 
-	//It Doent Render Anything If we Dont Move on FirstFrame 
 	while (!RGFW_window_shouldClose(window)) 
 	{
 		RGFW_pollEvents();
