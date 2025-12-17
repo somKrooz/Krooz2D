@@ -17,6 +17,7 @@ class Renderer
 private:
 	Scene* CurrentWorld;
 	vec<Instance> Objects;
+	vec<BindlessInstance> BindlessObjects;
 	scope<GpuLayout> buffer = nullptr;
 
 public:

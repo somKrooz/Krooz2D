@@ -56,9 +56,6 @@ namespace Default {
 		layout(location = 4) in uint aHandleLow;
 		layout(location = 5) in uint aHandleHigh;
 		
-		layout(location = 6) in vec2  uvoffset;
-		layout(location = 7) in vec2  uvscale;
-		
 		uniform mat4 uProjection;
 		uniform mat4 uView;
 
@@ -69,8 +66,7 @@ namespace Default {
 			vec2 worldPos = (mPosition * aInstanceScale) + aInstancePosition;
 			gl_Position = uProjection * uView * vec4(worldPos, 0.0, 1.0);
 			texHandle = uvec2(aHandleLow, aHandleHigh);
-
-			vertexUV = (mUV* uvscale) + uvoffset;
+			vertexUV = mUV;
 		}
 	)";
 
@@ -80,12 +76,13 @@ namespace Default {
 
 		out vec4 FragColor;
 		in vec2 vertexUV;
-		
-		flat in uvec2 texHandle; 
-		void main() {
+		flat in uvec2 texHandle;
+
+		void main()
+		{
 			sampler2D tex = sampler2D(texHandle);
 			FragColor = texture(tex, vertexUV);
 		}
-	)";
 
+	)";
 }

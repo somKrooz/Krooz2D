@@ -1,5 +1,6 @@
 CXX      := g++
 CXXFLAGS := -std=c++20 -O2 -march=native -Iinclude -Iexternal
+LAGACY := -DLEGACY
 LDFLAGS  := -Lexternal/GLAD/build
 LDLIBS   := -lopengl32 -lgdi32 -lglad
 
@@ -28,7 +29,7 @@ $(TARGET): $(OBJS)
 
 $(OBJDIR)/%.o: %.cpp
 	@mkdir -p $(@D)
-	$(CXX) $(CXXFLAGS) -c $< -o $@
+	$(CXX) $(CXXFLAGS) $(LAGACY) -c $< -o $@
 
 clean:
 	rm -rf build

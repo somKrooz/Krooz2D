@@ -18,17 +18,20 @@ public:
 
 struct Job {
 	std::string path;
+	u32 Ent;
 	scope<ImageResource> image;
-	Texture* tex;
-	u32 ID;
 };
 
 struct FinishedJob{
 	scope<ImageResource> image;
-	Texture* tex;
+	u32 Ent;
 };
 
-
+struct ImageDimension 
+{
+	int _width;
+	int _height;
+};
 
 struct AsyncTexture 
 {
@@ -43,7 +46,7 @@ struct AsyncTexture
 
 	public:
 	static void ThreadFunction();
-	static std::pair<int , int> Enqueue_texture(const std::string& path , Texture* tex ,u32 ent);
+	static ImageDimension Enqueue_texture(const std::string& path ,u32 ent);
 
 	static bool HasCompleted();
 	static FinishedJob GetResults();

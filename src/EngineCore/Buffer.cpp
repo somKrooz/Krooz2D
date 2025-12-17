@@ -21,6 +21,13 @@ void vertexArray::Push(int index, int size, int stride, const void* pointer)
 	glEnableVertexAttribArray(index);
 }
 
+void vertexArray::PushInt(int index, int size, int stride, const void* pointer)
+{
+    glVertexAttribIPointer(index, size, GL_UNSIGNED_INT, stride, pointer);
+    glEnableVertexAttribArray(index);
+}
+
+
 void vertexArray::Divisor(int index)
 {
 	glVertexAttribDivisor(index, 1);
@@ -55,6 +62,12 @@ void vertexBuffer::Push(vec<Instance>& data, usageDraw usage)
 {
 	glBufferData(GL_ARRAY_BUFFER, data.size() * sizeof(Instance), data.data(), usage);
 }
+
+void vertexBuffer::Push(vec<BindlessInstance>& data, usageDraw usage)
+{
+	glBufferData(GL_ARRAY_BUFFER, data.size() * sizeof(BindlessInstance), data.data(), usage);
+}
+
 
 vertexBuffer::~vertexBuffer()
 {

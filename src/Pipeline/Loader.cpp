@@ -18,32 +18,20 @@ ImageLoader::ImageLoader(vec<u8>& data)
 
 void ImageLoader::LoadFromPath(str path, ImageResource* img)
 {
-    int channels = 0;
+     int channels = 0;
+    u8* raw = stbi_load(path.c_str(),&img->width,&img->height,&channels,4);
 
-    u8* raw = stbi_load(path.c_str(), &img->width, &img->height, &channels, 4);
     if (!raw) {
         img->pixels.clear();
         img->width = img->height = 0;
-        return;
-    }
+		return;
+	}
 
-    int resizedW = std::max(1, img->width);
-    int resizedH = std::max(1, img->height);
-
-    std::vector<u8> resized(resizedW * resizedH * 4); 
-
-
-    stbir_resize_uint8_srgb(
-        raw, img->width, img->height, 0,
-        resized.data(), resizedW, resizedH, 0,
-        STBIR_RGBA_NO_AW
+    img->pixels.assign(
+        raw,
+        raw + img->width * img->height * 4
     );
-
     stbi_image_free(raw);
-
-    img->pixels = std::move(resized);
-    img->width  = resizedW;
-    img->height = resizedH;
 }
 
 void ImageLoader::LoadFromMemory(vec<u8>& buffer, ImageResource* img)
@@ -60,40 +48,32 @@ void ImageLoader::LoadFromMemory(vec<u8>& buffer, ImageResource* img)
 scope<ImageResource> ImageLoader::Get(){
 	return std::move(image);
 }
-
-
 void AsyncTexture::ThreadFunction()
 {
-	while (true) {
-		Job job;
-		{
-			std::unique_lock<std::mutex> lock(mtx);
-			cv.wait(lock, [] { return !jobs.empty() || !running; });
+    while (true) {
+        Job job;
+        {
+            std::unique_lock<std::mutex> lock(mtx);
+            cv.wait(lock, [] { return !jobs.empty() || !running; });
 
-			if (!running && jobs.empty()) break;
+            if (!running && jobs.empty()) break;
 
-			job = std::move(jobs.front());
-			jobs.pop();
-		}
+            job = std::move(jobs.front());
+            jobs.pop();
+        }
 
-		ImageLoader loader(job.path);
-		auto imgScope = loader.Get(); 
+        ImageLoader loader(job.path);
+        auto imgScope = loader.Get(); 
 
-		if (imgScope) {
-			job.image->pixels = std::move(imgScope->pixels);
-			job.image->id = 0;
-
-			job.tex->handle = 0;
-			job.tex->entid = job.ID;
-			job.tex->handle = 0;
-			job.tex->entid = job.ID;
-
-		}
-		{
-			std::lock_guard<std::mutex> lock(mtx);
-			completed.push( { std::move(job.image),job.tex } );
-		}
-	}
+        job.image->pixels = std::move(imgScope->pixels);
+        job.image->width = imgScope->width;  
+        job.image->height = imgScope->height; 
+        job.image->id = 0;
+        {
+            std::lock_guard<std::mutex> lock(mtx);
+            completed.push({ std::move(job.image), job.Ent });
+        }
+    }
 }
 
 void AsyncTexture::ReStateWorker()
@@ -105,7 +85,7 @@ void AsyncTexture::ReStateWorker()
 	worker = std::thread(ThreadFunction);
 }
 
-std::pair<int , int> AsyncTexture::Enqueue_texture(const std::string& path , Texture* tex , u32 ent)
+ImageDimension AsyncTexture::Enqueue_texture(const std::string& path ,  u32 ent)
 {
 	int w,h;
 	stbi_info(path.c_str() ,&w,&h,NULL);
@@ -114,12 +94,10 @@ std::pair<int , int> AsyncTexture::Enqueue_texture(const std::string& path , Tex
 	scope<ImageResource> image = createScope<ImageResource>();
 	{
 		std::lock_guard<std::mutex> lock(mtx);
-		jobs.push({path, std::move(image),tex, ent});
+		jobs.push({path,ent, std::move(image)});
 	}
-
 	cv.notify_one();
-
-	return{w,h};
+	return ImageDimension{w, h};
 }
 
 bool AsyncTexture::HasCompleted()

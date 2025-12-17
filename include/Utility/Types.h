@@ -65,10 +65,8 @@ struct ImageResource {
     }
 
     void Free() {
-       	vec<u8>().swap(pixels);
-		width  = 0;
-		height = 0;
-		id     = 0; 
+       	pixels.clear();
+		pixels.shrink_to_fit();
     }
 	~ImageResource()= default;
 };
@@ -90,29 +88,22 @@ struct Instance
 	float sx;
 	float sy;
 	float id;
-	// uint32_t handleLow;   
-    // uint32_t handleHigh; 
 
-	// float uvox;
-	// float uvoy;
-	// float uvsx;
-	// float uvsy;
 };
 
-// struct Instance
-// {
-// 	float x;
-// 	float y;
-// 	float sx;
-// 	float sy;
-// 	uint32_t handleLow;   
-//     uint32_t handleHigh; 
-
-// 	float uvox;
-// 	float uvoy;
-// 	float uvsx;
-// 	float uvsy;
-// };
+struct BindlessInstance
+{
+	float x;
+	float y;
+	float sx;
+	float sy;
+	uint32_t low;   
+    uint32_t high; 
+};
+// float uvox;
+// float uvoy;
+// float uvsx;
+// float uvsy;
 
 inline static std::vector<float> quad = {
 	0.0f, 0.0f, 0.0f, 0.0f,

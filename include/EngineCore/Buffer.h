@@ -18,6 +18,7 @@ public:
 	void unBind();
 	void Push(vec<float>& data, usageDraw usage);
 	void Push(vec<Instance>& data, usageDraw usage);
+	void Push(vec<BindlessInstance> &data, usageDraw usage);
 	~vertexBuffer();
 };
 
@@ -31,6 +32,7 @@ public:
 	void Bind();
 	void unBind();
 	void Push(int index, int size, int stride, const void* pointer);
+	void PushInt(int index, int size, int stride, const void *pointer);
 	void Divisor(int index);
 	~vertexArray();
 };
