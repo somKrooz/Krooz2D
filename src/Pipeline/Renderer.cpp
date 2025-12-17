@@ -94,8 +94,7 @@ void Renderer::Update(Shader* shader, float delta)
 		}
 		TextureManager::Push(Result.Ent ,handle);
 		#endif
-
-		printf("Current Size: %lu\n", TextureManager::GetSize());
+		// printf("Current Size: %lu\n", TextureManager::GetSize());
 	}
 	
 	BuildMeshData();

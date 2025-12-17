@@ -38,3 +38,8 @@ Mat4& Camera::GetView(){
 Mat4& Camera::GetProjection(){
 	return projectionMatrix;
 }
+
+void Camera::setZoom(float value)
+{
+	Zoom = value;
+}

@@ -9,12 +9,13 @@ struct Camera
 	inline static bool isCamera = false;
 
 	Vec2 Position = Vec2::Zero();
-	float Zoom = 1.0f;
+	inline static float Zoom = 1.0f;
 	TransformComponent* local = nullptr;
 
 	Camera();
 	void setTarget(TransformComponent& trs);
 	void Update(float delta);
+	static void setZoom(float value);
 	static bool isCameraExist();
 	static Mat4& GetView();
 	static Mat4& GetProjection();

@@ -1,6 +1,6 @@
 CXX      := g++
 CXXFLAGS := -std=c++20 -O2 -march=native -Iinclude -Iexternal
-LAGACY := -DLEGACY
+# LAGACY := -DLEGACY
 LDFLAGS  := -Lexternal/GLAD/build
 LDLIBS   := -lopengl32 -lgdi32 -lglad
 
