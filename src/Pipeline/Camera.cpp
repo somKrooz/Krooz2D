@@ -6,7 +6,6 @@ Camera::Camera(){
 
 void Camera::Update(float delta)
 {
-
 	float lerpFactor = 6.0f * delta;
 	Position = Vec2::mix(Position , local->GetPosition() ,lerpFactor);
 
@@ -16,8 +15,9 @@ void Camera::Update(float delta)
 	Vec2 ScreenCenter = Vec2(1280/2 , 720/2);
 	viewMatrix = Mat4::translate(ScreenCenter - ActorCenter);
 
-	float hZx = (1280 * Zoom) * 0.5;
-	float hZy = (720 * Zoom) * 0.5;
+	float invZoom = 1.0f / Zoom;
+	float hZx = (1280 * invZoom) * 0.5;
+	float hZy = (720 * invZoom) * 0.5;
 
 	projectionMatrix = Mat4::ortho(ScreenCenter.x - hZx, ScreenCenter.x + hZx, 
 	ScreenCenter.y + hZy , ScreenCenter.y - hZy, -1, 1);
@@ -42,4 +42,10 @@ Mat4& Camera::GetProjection(){
 void Camera::setZoom(float value)
 {
 	Zoom = value;
+}
+
+void Camera::setZoomLerp(float value , float dt) {
+
+    float t = 10.0f * dt;
+    Zoom = Zoom * (1.0f - t) + value * t;
 }

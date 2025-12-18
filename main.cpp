@@ -17,8 +17,10 @@
 #include "Components/TransformComponent.h"
 #include "Components/TextureComponent.h"
 #include "Components/AnimationComponent.h"
+#include "Components/CollisionComponent.h"
 
 #include <Pipeline/Renderer.h>
+#include <Pipeline/Collision.h>
 #include <cstdlib>
 #include <ctime>
 
@@ -97,14 +99,27 @@ int main(void)
 		ids.push_back(id);
 	}	
 	
-    Renderer render(scene);
-	Camera cam;
-	Camera::setZoom(0.2);
-	RGFW_event event;
-	cam.setTarget(scene.get<TransformComponent>(ids[0]));
-
+	
 	bool isMoving = false;
 	bool randomized = false;
+
+	scene.add<CollisionComponent>(ids[0] , CollisonType::COLLIDABLE);
+
+	for(auto& i : ids )
+	{
+		if(i == ids[0])
+			continue;
+
+		scene.add<CollisionComponent>(i , CollisonType::COLLISION);
+	}
+
+	Renderer render(scene);
+	Collision col(scene);
+
+	Camera cam;
+	Camera::setZoom(10.0f);
+	RGFW_event event;
+	cam.setTarget(scene.get<TransformComponent>(ids[0]));
 
 	while (!RGFW_window_shouldClose(window)) 
 	{
@@ -113,6 +128,7 @@ int main(void)
 		
 		float dt = GetDelta();
 		cam.Update(dt);
+		cam.setZoomLerp(Input::GetScrollData() , dt);
 
 		isMoving = false;
 		if(Input::IsKeyPressed((u32)('w'))){
@@ -151,7 +167,8 @@ int main(void)
 			}
 		}
 
-        render.Update(&shader, dt);
+		render.Update(&shader, dt);
+		col.Update(dt);
 		Input::Update(event);
         RGFW_window_swapBuffers_OpenGL(window);
         

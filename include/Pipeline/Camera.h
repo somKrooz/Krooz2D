@@ -14,6 +14,7 @@ struct Camera
 
 	Camera();
 	void setTarget(TransformComponent& trs);
+	void setZoomLerp(float value, float dt);
 	void Update(float delta);
 	static void setZoom(float value);
 	static bool isCameraExist();

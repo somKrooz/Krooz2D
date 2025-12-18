@@ -80,6 +80,19 @@ struct Texture
 	u64 handle;
 };
 
+enum CollisonType
+{
+	COLLIDABLE,
+	COLLISION
+};
+
+struct BBox
+{
+	float minX;
+	float maxX;
+	float minY;
+	float maxY;
+};
 
 struct Instance
 {
@@ -100,10 +113,7 @@ struct BindlessInstance
 	uint32_t low;   
     uint32_t high; 
 };
-// float uvox;
-// float uvoy;
-// float uvsx;
-// float uvsy;
+
 
 inline static std::vector<float> quad = {
 	0.0f, 0.0f, 0.0f, 0.0f,

@@ -25,5 +25,15 @@ void Input::Update(RGFW_event& event){
 	else if(event.type == RGFW_keyReleased){
 		CurrenKey[event.key.value] = false;
 	}
-} 
 
+	if(event.type == RGFW_mouseScroll){
+		scrollFactor += (float)event.scroll.y * 0.1f;
+		event.scroll.y = 0.0f;
+		scrollFactor = std::clamp(scrollFactor , 0.1f , 10.0f);
+	}
+
+} 
+float& Input::GetScrollData()
+{
+	return scrollFactor;
+}
