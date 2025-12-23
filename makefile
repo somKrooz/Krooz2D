@@ -16,7 +16,8 @@ SRCS := \
 	src/Pipeline/Renderer.cpp \
 	src/Pipeline/Camera.cpp \
 	src/Pipeline/Collision.cpp \
-	src/EngineCore/TextureManager.cpp
+	src/EngineCore/TextureManager.cpp \
+	src/EngineCore/Window.cpp
 
 OBJS := $(addprefix $(OBJDIR)/, $(SRCS:.cpp=.o))
 

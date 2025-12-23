@@ -1,26 +1,7 @@
 #include "Components/CollisionComponent.h"
 #include "Components/TransformComponent.h"
 #include "Pipeline/Collision.h"
-
-BBox MakeBoundingBox(TransformComponent& src)
-{
-    return BBox{src.GetPosition().x, src.GetPosition().x + src.GetScaleVec().x,
-                src.GetPosition().y, src.GetPosition().y + src.GetScaleVec().y};
-}
-
-BBox MakeBoundingBox(Vec2 Pos , Vec2 Scale)
-{
-    return BBox{Pos.x, Pos.x + Scale.x,Pos.y, Pos.y + Scale.y};
-}
-
-
-bool AABB(BBox& a , BBox& b)
-{
-    return !(a.maxX <= b.minX || 
-            a.minX >= b.maxX || 
-            a.maxY <= b.minY || 
-            a.minY >= b.maxY);
-}
+#include "Pipeline/helper.h"
 
 Collision::Collision(Scene& scene)
 {
@@ -32,7 +13,7 @@ Collision::Collision(Scene& scene)
             TransformComponent &trs = CurrentScene->get<TransformComponent>(id);
             Vec2 Pos = trs.GetPosition();
             Vec2 Scale = trs.GetScaleVec();
-            CollisionData.push_back(NativeCollision{Pos, Scale});
+            CollisionData.push_back(NativeCollision{id , Pos, Scale});
         }
         if(Comp.Get() == CollisonType::COLLIDABLE)
         {
@@ -40,18 +21,28 @@ Collision::Collision(Scene& scene)
             Vec2 Pos = trs.GetPosition();
             Vec2 Scale = trs.GetScaleVec();
 
-            Static.push_back(NativeCollision{Pos, Scale});
+            Static.push_back(NativeCollision{id , Pos, Scale});
+        }
+
+        if(Comp.Get() == CollisonType::DYNAMIC)
+        {
+            TransformComponent &trs = CurrentScene->get<TransformComponent>(id);
+            Vec2 Pos = trs.GetPosition();
+            Vec2 Scale = trs.GetScaleVec();
+            Dynamic.push_back(NativeCollision{id , Pos, Scale});
         }
     }
 
     printf("Static Size: %d\n", Static.size());
-    printf("Colliders Size: %d\n", CollisionData.size());
+    printf("Collider Size: %d\n", CollisionData.size());
+    printf("Dynamic Size: %d\n", Dynamic.size());
 }
 
 
 void ResolveTopDown(BBox& dyn, BBox& col, TransformComponent& Dynamic)
 {
-	float overlapLeft = dyn.maxX - col.minX;
+
+    float overlapLeft = dyn.maxX - col.minX;
 	float overlapRight = col.maxX - dyn.minX;
 	float overlapBottom = dyn.maxY - col.minY;
 	float overlapTop = col.maxY - dyn.minY;
@@ -72,38 +63,60 @@ void ResolveTopDown(BBox& dyn, BBox& col, TransformComponent& Dynamic)
 	}
 
 	Dynamic.SetPosition(NextPosition);
-
 }
 
 void Collision::Update(float dt)
 {
-    Static.clear();
-    TransformComponent *Current = nullptr;
+    if(!Static.empty()) Static.clear();
+    hasCollided = false;
     for (auto &[id, Comp]: CurrentScene->all<CollisionComponent>())
     {
         if(Comp.Get() == CollisonType::COLLIDABLE)
         {
-            Current = &CurrentScene->get<TransformComponent>(id);
-            Vec2 Pos = Current->GetPosition();
-            Vec2 Scale = Current->GetScaleVec();
+            auto trs = CurrentScene->get<TransformComponent>(id);
+            Vec2 Pos = trs.GetPosition();
+            Vec2 Scale = trs.GetScaleVec();
 
-            Static.push_back(NativeCollision{Pos, Scale});
+            Static.push_back(NativeCollision{id,Pos, Scale});
         }
     }
 
     for (auto &stat : Static)
     {
-        BBox s = MakeBoundingBox(stat._Position, stat._Scale);
-        // printf("details: %.1f , %.1f\n", s.maxX , s.maxY);
-
+        BBox s = Helper::MakeBoundingBox(stat._Position, stat._Scale);
+        auto Current = &CurrentScene->get<TransformComponent>(stat._id);
         for (auto &collision : CollisionData)
         {
-            BBox c = MakeBoundingBox(collision._Position, collision._Scale);
-            if (AABB(c, s))
+            BBox c = Helper::MakeBoundingBox(collision._Position, collision._Scale);
+            if (Helper::AABB(c, s))
             {
+                hasCollided = true;
                 ResolveTopDown(s, c, *Current);
             }
         }
     }
+
+    for (auto &collision : Dynamic)
+    {
+        auto& dynTrs = CurrentScene->get<TransformComponent>(collision._id);
+        BBox dynBox = Helper::MakeBoundingBox(dynTrs);
+
+        for (auto &stat : Static)
+        {
+            BBox statBox = Helper::MakeBoundingBox(stat._Position, stat._Scale);
+
+            if (Helper::AABB(dynBox, statBox))
+            {
+                hasCollided = true;
+                ResolveTopDown(dynBox, statBox, dynTrs);
+            }
+        }
+    }
+
+}
+
+bool Collision::GetCollisionEvent()
+{
+    return hasCollided;
 }
 

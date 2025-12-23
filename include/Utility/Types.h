@@ -12,6 +12,7 @@
 #include <unordered_map>
 #include <condition_variable>
 
+#define KROOZ_BIT(x) (1 << (x))
 using str = std::string;
 using cstr = const char;
 using u8 = uint8_t;
@@ -83,7 +84,8 @@ struct Texture
 enum CollisonType
 {
 	COLLIDABLE,
-	COLLISION
+	COLLISION,
+	DYNAMIC
 };
 
 struct BBox

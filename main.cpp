@@ -2,16 +2,14 @@
 #include "Pipeline/Loader.h"
 #include "EngineCore/Buffer.h"
 #include "EngineCore/Shader.h"
-#define RGFW_IMPLEMENTATION
-#define RGFW_OPENGL
-#include <External/WindowBind.h>
+// #define RGFW_IMPLEMENTATION
+// #define RGFW_OPENGL
+// #include <External/WindowBind.h>
+#include <EngineCore/Window.h>
 #include <Utility/Embed.h>
 #include <EngineCore/Scene.h>
 #include <Pipeline/Camera.h>
 #include "EngineCore/TextureManager.h"
-#include <vector>
-#include "chrono"
-#include "cmath"
 #include "EngineCore/Input.h"
 
 #include "Components/TransformComponent.h"
@@ -23,6 +21,8 @@
 #include <Pipeline/Collision.h>
 #include <cstdlib>
 #include <ctime>
+#include <chrono>
+#include <cmath>
 
 float GetDelta()
 {
@@ -36,7 +36,6 @@ float GetDelta()
 	return deltatime;
 }
 
-
 void ChangeBulkTexture(Scene& sc , vec<u32>& vec , u32 tex)
 {
 	for(auto& i : vec)
@@ -49,8 +48,8 @@ void ChangeBulkTexture(Scene& sc , vec<u32>& vec , u32 tex)
 
 int main(void) 
 {
-    RGFW_window* window = RGFW_createWindow("krooz", 0, 0, 1280, 720, RGFW_windowOpenGL);
-    gladLoadGLLoader((GLADloadproc)RGFW_getProcAddress_OpenGL);
+	auto window = KroozWindow::createWindow(1280, 720, "Krooz");
+	KroozWindow::defineWindowAttr(WindowAttributes::ClearBorder | WindowAttributes::Centered);
 
 	#ifdef LEGACY
     	Shader shader(LegacyDefault::vertexshader, LegacyDefault::fragmentshader);
@@ -76,9 +75,9 @@ int main(void)
 	std::srand((unsigned)std::time(nullptr));
 
 	vec<ent> ids;
-	constexpr int COUNT = 10000;
-	constexpr int COLS  = 150;
-	constexpr int ROWS  =(COUNT + COLS - 1) / COLS;
+	constexpr int COUNT = 50000;
+	constexpr int COLS  = 500;
+	constexpr int ROWS  =(COUNT + COLS - 1) / COLS; 
 
 	constexpr float TILE_SIZE = 10.0f; 
 	constexpr float SPACING = 2.0f;    
@@ -109,25 +108,30 @@ int main(void)
 	{
 		if(i == ids[0])
 			continue;
-
-		scene.add<CollisionComponent>(i , CollisonType::COLLISION);
+		if(i<= 5000){
+			scene.add<CollisionComponent>(i , CollisonType::DYNAMIC);
+		}
+		else{
+			scene.add<CollisionComponent>(i , CollisonType::COLLISION);
+		}
 	}
-
+	
 	Renderer render(scene);
 	Collision col(scene);
 
 	Camera cam;
-	Camera::setZoom(10.0f);
-	RGFW_event event;
+	Camera::setZoom(0.5f);
+	Input::InitInput(Camera::GetZoom());
+
 	cam.setTarget(scene.get<TransformComponent>(ids[0]));
 
-	while (!RGFW_window_shouldClose(window)) 
+	while (!KroozWindow::isWindowValid()) 
 	{
-		RGFW_pollEvents();
-		RGFW_window_checkEvent(window , &event);
+		KroozWindow::PoolEvent();
 		
 		float dt = GetDelta();
 		cam.Update(dt);
+
 		cam.setZoomLerp(Input::GetScrollData() , dt);
 
 		isMoving = false;
@@ -155,6 +159,10 @@ int main(void)
 			scene.get<TransformComponent>(ids[0]).AddOffset({100*dt , 0});
 			ChangeBulkTexture(scene, ids, rc);
 		}
+		if(Collision::GetCollisionEvent()){
+			// cam.setZoomLerp(2.0f, dt);
+			Camera::ShakeCam();
+		}
 		if(!isMoving && !randomized)
 		{
 			randomized = true;
@@ -169,11 +177,8 @@ int main(void)
 
 		render.Update(&shader, dt);
 		col.Update(dt);
-		Input::Update(event);
-        RGFW_window_swapBuffers_OpenGL(window);
-        
-    }
-    AsyncTexture::Shutdown();
-    RGFW_window_close(window);
+		KroozWindow::swapBuffers();
+	}
+	KroozWindow::destroyWindow();
     return 0;
 }

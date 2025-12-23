@@ -13,9 +13,10 @@ class Input
 	static inline float scrollFactor = 0.0f;
 
 	public:
-	static bool IsKeyPressed(int Key);
-	static bool IsKeyReleased(int Key);
-	static bool IsJustPressed(int Key);
-	static float& GetScrollData();
-	static void Update(RGFW_event& event);
+		static void InitInput(float val);
+		static bool IsKeyPressed(int Key);
+		static bool IsKeyReleased(int Key);
+		static bool IsJustPressed(int Key);
+		static float &GetScrollData();
+		static void Update(RGFW_event &event);
 };

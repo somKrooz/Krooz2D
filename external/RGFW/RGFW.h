@@ -1252,7 +1252,7 @@ RGFWDEF void RGFW_getMouseVector(float* x, float* y);
  *
  * NOTE: (windows) if the executable has an icon resource named RGFW_ICON, it will be set as the initial icon for the window
 */
-RGFWDEF RGFW_window* RGFW_createWindow(const char* name, i32 x, i32 y, i32 w, i32 h,  RGFW_windowFlags flags);
+RGFWDEF RGFW_window* RGFW_createWindow(const char* name, i32 x, i32 y, i32 w, i32 h, RGFW_windowFlags flags);
 
 /**!
  * @brief creates a new window using a pre-allocated window structure
